@@ -1,0 +1,49 @@
+<nb-card>
+    <nb-card-body>
+        <h4 class="mb-3">New user</h4>
+        <form class="flex flex-col gap-4 xl:flex-row"
+            [formGroup]="createUserForm"
+            (ngSubmit)="onSubmit()">
+            <div class="flex flex-col gap-4 justify-between lg:flex-row flex-grow">
+                <div class="flex-grow">
+                    <input
+                        nbInput
+                        fullWidth
+                        type="text"
+                        fieldSize="medium"
+                        placeholder="Name"
+                        formControlName="name"
+                    />
+                </div>
+                <div class="flex-grow">
+                    <input
+                        nbInput
+                        fullWidth
+                        type="text"
+                        fieldSize="medium"
+                        placeholder="Email"
+                        formControlName="email"
+                    />
+                </div>
+                <div class="flex flex-grow items-center gap-4 justify-center">
+                    <nb-toggle
+                        (checkedChange)="onRoleChange($event)"
+                        status="primary"
+                        labelPosition="start">
+                        Is Admin?
+                    </nb-toggle>
+                </div>
+            </div>
+            <div class="flex gap-4 items-center justify-end">
+                <button nbButton size="medium" (click)="onCancel()">
+                    <nb-icon icon="close-outline"></nb-icon>
+                    Cancel
+                </button>
+                <button nbButton status="primary" size="medium" type="submit">
+                    <nb-icon icon="save-outline"></nb-icon>
+                    Save
+                </button>
+            </div>
+        </form>
+    </nb-card-body>
+</nb-card>

@@ -1,0 +1,37 @@
+<div class="user-actions">
+    <nb-form-field>
+        <nb-icon nbPrefix icon="person-outline" pack="eva"></nb-icon>
+        <input type="text" nbInput fieldSize="large" placeholder="Search user">
+    </nb-form-field>
+
+    <button nbButton status="primary" size="large" (click)="onAddUserClick()">
+        <nb-icon icon="plus"></nb-icon>
+        Add User
+    </button>
+</div>
+
+<app-new-user
+    *ngIf="showCreateUserComponent"
+    (onCancelCreation)="hideAddUser()"
+    (onUserCreated)="userCreated($event)">
+</app-new-user>
+
+<nb-card *ngFor="let user of users">
+    <nb-card-body>
+        <div class="card-content">
+            <nb-user size="large"
+                    [name]="user.name"
+                    [title]="user.role"
+                    badgeStatus="success"
+                    badgePosition="bottom right">
+            </nb-user>
+            <div class="card-actions">
+                <span>{{user.email}}</span>
+                <button nbButton (click)="deleteUser(user.id)">
+                    <nb-icon icon="trash-2-outline"></nb-icon>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </nb-card-body>
+</nb-card>

@@ -1,0 +1,43 @@
+@forward '@nebular/theme/styles/theming';
+@use '@nebular/theme/styles/theming' as *;
+@use '@nebular/theme/styles/themes/dark';
+@use 'sass:color';
+
+$primary-color: #8b5cf6;
+$primary-color-dark: darken($primary-color, 10%);
+
+$nb-themes: nb-register-theme((
+    font-family-primary: 'Inter',
+    layout-background-color: #f1f5f9,
+    background-basic-color-1: white,
+    sidebar-background-color: $primary-color-dark,
+    menu-item-icon-color: white,
+    menu-item-icon-width: 2rem,
+    menu-item-icon-margin: 0,
+    border-radius: 0.5rem,
+    // header
+    header-padding: 1.25rem 2rem,
+    // button primary
+    button-filled-primary-background-color: $primary-color,
+    button-filled-primary-border-color: $primary-color,
+    button-filled-primary-hover-background-color: #a47dff,
+    button-filled-primary-hover-border-color: $primary-color,
+    button-filled-primary-focus-background-color: $primary-color-dark,
+    // button secondary
+    button-filled-basic-background-color: #e2e8f0,
+    button-filled-basic-border-color: #e2e8f0,
+    button-filled-basic-text-color: #64748b,
+    button-filled-text-transform: none,
+    button-filled-secondary-hover-background-color: #e8eff9,
+    button-filled-secondary-hover-border-color: #e2e8f0,
+    // User component
+    card-margin-bottom: 0.75rem,
+    card-padding: 0.75rem 1rem,
+    user-name-text-font-weight: 600, 
+    user-name-text-color: #444,
+    user-title-text-color: rgb(148, 163, 184),
+    user-picture-box-border-color: button-filled-primary-background-color,
+    // Tables
+    tree-grid-cell-padding: 0.35rem 0.75rem,
+    tree-grid-cell-border-color: #DDD,
+), 'custom-theme', 'default');

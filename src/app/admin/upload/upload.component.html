@@ -1,0 +1,38 @@
+<nb-card>
+    <nb-card-header>
+        <h4>
+            <nb-icon icon="upload-outline"></nb-icon>
+            Upload File
+        </h4>
+    </nb-card-header>
+    <nb-card-body>
+        Please select a file to upload
+        <input
+            type="file"
+            class="file-input"
+            (change)="onFileSelected($event)"
+            #fileUpload>
+
+        <div class="file-upload flex flex-col gap-4">
+            <span>
+                {{fileName || "No file uploaded yet."}}
+            </span>
+            <button
+                nbButton
+                status="primary"
+                class="upload-btn"
+                accept=".csv"
+                (click)="fileUpload.click()">
+                <nb-icon icon="attach-outline">
+                </nb-icon>
+                Upload CSV
+            </button>
+            <button
+                nbButton
+                status="danger"
+                (click)="ref.close(false)">
+                Cancel
+            </button>
+        </div>
+    </nb-card-body>
+</nb-card>

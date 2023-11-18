@@ -1,1 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
+
+@use 'tailwindcss/base';
+@use 'tailwindcss/components';
+@use 'tailwindcss/utilities';
+
+@use 'assets/styles/theme-custom' as *;
+@use '@nebular/auth/styles/globals' as *;
+@use '@nebular/theme/styles/globals' as *;
+
+// // install the framework styles
+@include nb-install() {
+  @include nb-theme-global();
+  @include nb-auth-global();
+}
+
+nb-menu .menu-item {
+  border-bottom: medium none;
+}

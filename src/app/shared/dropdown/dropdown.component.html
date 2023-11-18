@@ -1,0 +1,16 @@
+<input
+    #autoInput
+    nbInput
+    [value]="defaultValue"
+    [fieldSize]="fieldSize"
+    type="text"
+    (input)="onChange()"
+    [class]="class"
+    [nbAutocomplete]="auto"
+/>
+
+<nb-autocomplete #auto (selectedChange)="onSelectionChange($event)">
+    <nb-option *ngFor="let option of filteredOptions$ | async" [value]="option.label">
+        {{ option.label }}
+    </nb-option>
+</nb-autocomplete>

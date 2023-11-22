@@ -10,4 +10,5 @@ export interface IReportDTO {
     rating?: number,
     submitted?: string,
     platform?: string,
+    store: string,
 };

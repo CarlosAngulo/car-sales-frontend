@@ -1,7 +1,10 @@
-export interface IPaginationDTO<T> {
-    limit: number,
-    page: number,
-    totalPages: number,
-    totalresults: number,
+export interface IPaginationMeta {
+    limit: number;
+    page: number;
+    totalPages: number;
+    totalResults?: number;
+}
+
+export interface IPaginationDTO<T> extends IPaginationMeta {
     results: T[]
 }

@@ -6,6 +6,7 @@ import { IReportDTO } from "src/app/models/report.model";
 export abstract class ReportsGateway {
     abstract getAll(queryParams?:string): Observable<IPaginationDTO<IReportDTO>>;
     abstract createReport(formBody: Partial<IReportDTO>): Observable<IReportDTO>;
+    abstract createMultipleReport(formBody: Partial<IReportDTO>[]): Observable<IReportDTO>
     abstract updateReport(id:string, reqBody: Partial<IReportDTO>): Observable<void | IErrorDTO>;
     abstract deleteReport(id: string): Observable<void | IErrorDTO>;
 }

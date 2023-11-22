@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
         state: RouterStateSnapshot
     ) : boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
 
-        if (this.isSessionExpired()) {
+        if (this.isSessionActive()) {
             return true;
         } else {
             this.router.navigate(['/auth']);
@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
         }
     }
 
-    isSessionExpired(): boolean {
+    isSessionActive(): boolean {
         const authAppToken = localStorage.getItem('auth_app_token');
         if (!authAppToken) return false;
         const expiration: string = JSON.parse(authAppToken).value.tokens.access.expires;

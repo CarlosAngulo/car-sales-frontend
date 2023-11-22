@@ -9,18 +9,22 @@ import { UsersGateway } from './domain/users-gateway';
 })
 export class UsersComponent {
   users!: IUserDTO[];
+  currentUserId!: string;
   showCreateUserComponent = false;
 
   constructor(
     private readonly usersService: UsersGateway
     ) {
     this.loadUsers();
+    const authAppToken = localStorage.getItem('auth_app_token');
+    if (authAppToken){
+      this.currentUserId = JSON.parse(authAppToken).value.user.id;
+    }
   }
 
   loadUsers() {
     this.usersService.getAll('sortBy=createdAt:desc').subscribe((res) => {
-      this.users = res.results;
-      console.log(this.users)
+      this.users = res.results.filter((result) => result.id !== this.currentUserId);
     });
   }
 
@@ -41,7 +45,6 @@ export class UsersComponent {
     this.usersService.deleteUser(id).subscribe(
       (resp) => {
         this.loadUsers();
-        console.log(resp)
       }
     )
   }

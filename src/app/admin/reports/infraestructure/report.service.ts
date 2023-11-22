@@ -26,6 +26,10 @@ export class ReportsService extends ReportsGateway {
     createReport(formBody: Partial<IReportDTO>): Observable<IReportDTO> {
         return this.http.post<IReportDTO>(`${this.url}/reports`, formBody)
     }
+    
+    createMultipleReport(formBody: Partial<IReportDTO>[]): Observable<IReportDTO> {
+        return this.http.post<IReportDTO>(`${this.url}/reports`, formBody);
+    }
 
     deleteReport(id:string): Observable<void | IErrorDTO> {
         return this.http.delete<void | IErrorDTO>(`${this.url}/reports/${id}`);

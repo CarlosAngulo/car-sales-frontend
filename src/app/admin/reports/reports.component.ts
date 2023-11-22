@@ -5,10 +5,12 @@ import { IDropdownOption } from 'src/app/shared/dropdown/dropdown.component';
 import { NbComponentSize, NbDialogService } from '@nebular/theme';
 import { ReportsGateway } from './domain/reports-gateway';
 import { IReportDTO } from 'src/app/models/report.model';
-import { forkJoin, of, switchMap } from 'rxjs';
+import { Observable, catchError, forkJoin, of, switchMap, tap } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormValidatorsService } from 'src/app/shared/services/form-validators.service';
 import { UploadComponent } from '../upload/upload.component';
+import { StoresGateway } from '../stores/domain/stores-gateway';
+import { IPaginationDTO, IPaginationMeta } from 'src/app/models/pagination.model';
 
 @Component({
   selector: 'app-reports',
@@ -17,6 +19,7 @@ import { UploadComponent } from '../upload/upload.component';
   providers: [ FormValidatorsService ]
 })
 export class ReportsComponent implements OnInit {
+  loading = true;
   customColumn = 'client';
   users!: IUserDTO[];
   reports!: IReportDTO[];
@@ -26,13 +29,15 @@ export class ReportsComponent implements OnInit {
   componentSize!: NbComponentSize;
   reportForm!: FormGroup;
   revisionMode = false;
-  houses: IDropdownOption[] = [
+  selectedStore!: any;
+  stores: IDropdownOption[] = [
     {label: 'Maple Shade', value: 1},
     {label: 'Nissan', value: 2},
     {label: 'Trooper', value: 3},
     {label: 'Philadelphia', value: 4},
   ];
-
+  pagination!: IPaginationMeta;
+  currentEditedReport!: IReportDTO | undefined;
 
   tableHeaders = ["Client", "Sales Person", "Picture", "Paid ", "Positive", "Rating", "Submited", "Plaform", "Actions"];
 
@@ -44,35 +49,82 @@ export class ReportsComponent implements OnInit {
   constructor(
     private readonly usersService: UsersGateway,
     private readonly reportsService: ReportsGateway,
-    private dialogService: NbDialogService,
-    private fb: FormBuilder,
-    private formValidators: FormValidatorsService
+    private readonly storesService: StoresGateway,
+    private readonly dialogService: NbDialogService,
+    private readonly fb: FormBuilder,
+    private readonly formValidators: FormValidatorsService
   ) { }
 
   ngOnInit(): void {
-    this.loadReports();
+    this.loadStoresAndReports();
     this.createReportForm();
   }
 
-  loadReports() {
-    const reportsObs =  this.reportsService.getAll('sortBy=createdAt:desc');
-    const usersObs = this.usersService.getAll('role=user&sortBy=createdAt:desc');
-    forkJoin([usersObs, reportsObs]).subscribe(
-      ([users, reports]) => {
-        this.users = users.results
-        this.salesPeople = users.results.map((user) => ({
-          label: user.name,
-          value: user.id
-        }));
-        this.reports = reports.results.map((report) => ({
-          ...report,
-          salesPerson: this.users.find((salesPerson) => {
-            const id = 'id' in salesPerson ? salesPerson.id : '';
-            return id === report.salesPerson
-          })
-        }))
+  getReports$(queryParams?: {[key:string]: any}):  Observable<IPaginationDTO<IReportDTO>> {
+    this.reports = [];
+    this.loading = true;
+    let query = `sortBy=createdAt:desc&store=${this.currentStoreName}`;
+    for (const key in queryParams) {
+      if (Object.prototype.hasOwnProperty.call(queryParams, key)) {
+        query += `&${key}=${queryParams[key]}`;
       }
+    }
+    return this.reportsService.getAll(query)
+    .pipe(
+      tap((_) => this.loading = false)
     );
+  }
+
+  loadStoresAndReports() {
+    this.storesService.getAll()
+    .pipe(
+      switchMap((stores)=> {
+        this.stores = stores.map((store) => ({
+          label: store.name,
+          value: store.id
+        }));
+        this.selectedStore = this.currentStoreName || this.stores[0].value;
+
+        return forkJoin([
+          this.getReports$(),
+          this.usersService.getAll('role=user&sortBy=createdAt:desc')
+        ])
+      })
+    )
+    .subscribe(([reports, users]) => {
+
+      this.users = users.results
+        
+      this.salesPeople = users.results.map((user) => ({
+        label: user.name,
+        value: user.id
+      }));
+
+      this.loadReportList(reports)
+    });
+  }
+
+  get currentStoreName(): string | undefined {
+    return this.stores.find((store) => store.value === this.selectedStore)?.label || undefined;
+  }
+
+  loadReportList(reports: IPaginationDTO<IReportDTO>) {
+    this.pagination = {
+      limit: reports.limit,
+      page: reports.page,
+      totalPages: reports.totalPages,
+      totalResults: reports.totalResults
+    };
+
+    console.log(reports)
+    
+    this.reports = reports.results.map((report) => ({
+      ...report,
+      salesPerson: this.users.find((salesPerson) => {
+        const id = 'id' in salesPerson ? salesPerson.id : '';
+        return id === report.salesPerson
+      })
+    }))
   }
 
   editReport(id: string = '') {
@@ -102,7 +154,7 @@ export class ReportsComponent implements OnInit {
       positive: [null, [this.formValidators.booleanValidator()]],
       rating: [null, [this.formValidators.numericValidator()]],
       submitted: [null, [this.formValidators.dateValidator()]],
-      platform: [null, []]
+      platform: [null, []],
     })
   }
 
@@ -117,8 +169,11 @@ export class ReportsComponent implements OnInit {
   }
 
   onCreateReportSubmit() {
-    console.log(this.reportForm)
-    this.reportsService.createReport(this.reportForm.value)
+    const reportData = {
+      ...this.reportForm.value,
+      store: this.currentStoreName
+    }
+    this.reportsService.createReport(reportData)
     .subscribe((report: IReportDTO) => {
       this.showAddReport(false);
       this.reports.unshift({
@@ -131,14 +186,53 @@ export class ReportsComponent implements OnInit {
     })
   }
 
+  onEditReportRecordSubmit() {
+    console.log('submitiendo', this.currentEditedReport)
+    if (this.currentEditedReport?.id) {
+      this.reportsService.updateReport(this.currentEditedReport?.id, this.currentEditedReport)
+      .pipe(
+        switchMap((res) => {
+          console.log('updated ', res);
+          this.currentReportEdit = '';
+          this.currentEditedReport = undefined;
+          return this.getReports$();
+        })
+      )
+      .subscribe(res => {
+        this.loadReportList(res);
+      })
+    }
+  }
+
   updateReport(value: any, field: string, id: string, textfield?: boolean) {
-    if (this.currentReportEdit || this.revisionMode) return;
+    if (this.revisionMode) return;
+
     if (textfield) {
       value = value.srcElement?.value
     }
+
     if (value.label) {
       value = value.value;
     }
+    
+    if (this.currentReportEdit) {
+      if (!this.currentEditedReport) {
+        this.currentEditedReport = this.reports.find((report) => report.id === id);
+      } 
+      if (this.currentEditedReport) {
+        this.currentEditedReport = {
+          ...this.currentEditedReport,
+          salesPerson: this.users.find((salesPerson) => {
+            const id = 'id' in salesPerson ? salesPerson.id : '';
+            return id === this.currentEditedReport?.salesPerson
+          }),
+          [field]: value
+        }
+      }
+      console.log(this.currentEditedReport)
+      return;
+    }
+
     console.log(value, field, id)
     this.reportsService.updateReport(id, { [field]: value })
     .subscribe(res => console.log('updated ', res))
@@ -153,7 +247,6 @@ export class ReportsComponent implements OnInit {
       switchMap((deleting: boolean) => deleting ? this.reportsService.deleteReport(reportID) : of({}))
     )
     .subscribe((deletedReport: any) => {
-      console.log(deletedReport)
       if (!deletedReport.id) return;
       const index = this.reports.findIndex(report => report.id === deletedReport.id);
       this.reports.splice(index, 1);
@@ -163,6 +256,7 @@ export class ReportsComponent implements OnInit {
   uploadFile() {
     this.dialogService.open(UploadComponent, {})
     .onClose.subscribe((res: any) => {
+      this.selectedStore = undefined;
       this.revisionMode = true;
       this.reports = res;
       console.table(res);
@@ -170,17 +264,48 @@ export class ReportsComponent implements OnInit {
   }
 
   onSaveImport() {
-    this.revisionMode = false;
-    this.loadReports();
+    if (!this.selectedStore) return;
+
+    const reports = this.reports.map((report) => ({
+      ...report,
+      store: this.currentStoreName
+    }));
+
+    this.reportsService.createMultipleReport(reports)
+    .pipe(
+      catchError((err) => of({error: err}))
+    )
+    .subscribe((res: any) => {
+      if (!res.error) {
+        this.revisionMode = false;
+        this.getReports$()
+        .subscribe(this.loadReportList);
+      }
+    });
   }
   
   onCancelImport() {
     this.revisionMode = false;
-    this.loadReports();
+    this.selectedStore = this.currentStoreName || this.stores[0].value;
+    this.getReports$()
+    .subscribe((l) =>{
+      console.log(l)
+      this.loadReportList(l)
+    });
   }
 
-  onHouseSelect(event: any) {
+  onStoreSelect(event: IDropdownOption) {
     console.log(event)
+    this.getReports$()
+    .subscribe((res) =>{
+      this.loadReportList(res);
+    })
   }
 
+  onPageChange(event: number) {
+    this.getReports$({'page': event})
+    .subscribe((res) =>{
+      this.loadReportList(res);
+    })
+  }
 }

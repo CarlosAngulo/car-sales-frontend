@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HttpResponse,
+  HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = localStorage.getItem('accessToken');
@@ -22,6 +25,16 @@ export class AuthTokenInterceptor implements HttpInterceptor {
         }
       })
     }
-    return next.handle(request);
+
+    return next.handle(request)
+    .pipe(
+      tap({
+        error: (err) => {
+          if (err instanceof HttpErrorResponse && err.status === 401) {
+            this.router.navigate(['/auth']);
+          }
+        }
+      })
+    )
   }
 }

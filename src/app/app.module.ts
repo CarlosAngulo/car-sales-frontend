@@ -13,6 +13,8 @@ import {
 } from '@nebular/auth';
 import { environment } from './environment/environment';
 import { AuthTokenInterceptor } from './auth/auth-token.interceptor';
+import { AuthGateway } from './auth/domain/auth-gateway';
+import { AuthService } from './auth/infraestrcuture/auth.service';
 
 @NgModule({
   declarations: [
@@ -34,9 +36,16 @@ import { AuthTokenInterceptor } from './auth/auth-token.interceptor';
             class: NbAuthSimpleToken,
             key: 'data'
           },
+          refreshToken: {
+            endpoint: '/auth/refresh-tokens',
+            method: 'post',
+            redirect: {
+              failure: 'auth',
+              success: 'admin'
+            }
+          },
           login: {
             endpoint: '/auth/login',
-
             redirect: {
               success: 'admin',
               failure: null,
@@ -59,6 +68,10 @@ import { AuthTokenInterceptor } from './auth/auth-token.interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthTokenInterceptor,
       multi: true
+    },
+    {
+      provide: AuthGateway,
+      useClass: AuthService
     }
   ],
   bootstrap: [AppComponent]

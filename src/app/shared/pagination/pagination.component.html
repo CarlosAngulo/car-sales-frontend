@@ -1,0 +1,28 @@
+<div class="pagination" *ngIf="currentPage && pageList.length > 1">
+    <ul class="pagination-list">
+        <li *ngFor="let page of pageList"
+            class="pagination-list-item"
+            (click)="onPageClick(page)"
+            [class.active]="page === currentPage">
+            {{page}}
+        </li>
+    </ul>
+    <div class="pagination-buttons">
+        <button
+            nbButton
+            (click)="onChangePage(-1)"
+            status="primary"
+            shape="semi-round"
+            [disabled]="currentPage === 1">
+            <nb-icon icon="arrow-ios-back-outline"></nb-icon>
+        </button>
+        <button
+            nbButton
+            (click)="onChangePage(1)"
+            status="primary"
+            shape="semi-round"
+            [disabled]="currentPage === pageList.length">
+            <nb-icon icon="arrow-ios-forward-outline"></nb-icon>
+        </button>
+    </div>
+</div>

@@ -7,13 +7,14 @@ $primary-color: #8b5cf6;
 $primary-color-dark: darken($primary-color, 10%);
 
 $nb-themes: nb-register-theme((
+    background-basic-color-1: white,
     font-family-primary: 'Inter',
     layout-background-color: #f1f5f9,
-    background-basic-color-1: white,
-    sidebar-background-color: $primary-color-dark,
+    layout-padding: 2rem 2.25rem 1rem,
     menu-item-icon-color: white,
     menu-item-icon-width: 2rem,
     menu-item-icon-margin: 0,
+    sidebar-background-color: $primary-color-dark,
     border-radius: 0.5rem,
     // header
     header-padding: 1.25rem 2rem,

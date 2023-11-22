@@ -1,16 +1,9 @@
-export interface ITokens {
-    token: string,
-    expires: string,
-}
+import { ITokensDTO } from "./auth.model"
 
-export interface IUserDTO {
+export interface IUserDTO extends ITokensDTO {
     id: string,
     name: string,
     email: string,
     role: 'user' | 'admin',
-    isEmailVerified?: false,
-    tokens?: {
-        access: ITokens,
-        refresh: ITokens
-    }
+    isEmailVerified?: false
 };

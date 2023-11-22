@@ -1,7 +1,7 @@
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   NbSidebarModule,
   NbLayoutModule,
@@ -16,7 +16,8 @@ import {
   NbTreeGridModule,
   NbDatepickerModule,
   NbDialogModule,
-  NbSelectModule
+  NbSelectModule,
+  NbSpinnerModule
 } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { AdminComponent } from './admin.component';
@@ -30,6 +31,9 @@ import { SharedModule } from '../shared/shared.module';
 import { ReportsGateway } from './reports/domain/reports-gateway';
 import { ReportsService } from './reports/infraestructure/report.service';
 import { UploadComponent } from './upload/upload.component';
+import { StoresComponent } from './stores/stores.component';
+import { StoresGateway } from './stores/domain/stores-gateway';
+import { StoresService } from './stores/infraestructure/stores.service';
 
 @NgModule({
   declarations: [
@@ -37,20 +41,22 @@ import { UploadComponent } from './upload/upload.component';
     ReportsComponent,
     UsersComponent,
     NewUserComponent,
-    UploadComponent
+    UploadComponent,
+    StoresComponent
   ],
   imports: [
     AdminRoutingModule,
     ReactiveFormsModule,
     RouterModule,
     CommonModule,
+    FormsModule,
     NbCardModule,
+    NbSpinnerModule,
     NbLayoutModule,
     NbButtonModule,
     NbIconModule,
     NbUserModule,
     NbAuthModule,
-    NbButtonModule,
     NbFormFieldModule,
     NbInputModule,
     NbToggleModule,
@@ -70,6 +76,10 @@ import { UploadComponent } from './upload/upload.component';
     {
       provide: ReportsGateway,
       useClass: ReportsService
+    },
+    {
+      provide: StoresGateway,
+      useClass: StoresService
     }
   ]
 })

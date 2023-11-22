@@ -17,3 +17,27 @@
 nb-menu .menu-item {
   border-bottom: medium none;
 }
+
+
+nb-auth {
+  nb-layout .layout {
+    background-image: linear-gradient(-135deg, rgb(139, 92, 246), rgb(76, 29, 149));
+    background:
+      linear-gradient(135deg,#0000 18.75%,rgb(76, 29, 149) 0 31.25%,#0000 0),
+      repeating-linear-gradient(45deg,rgb(76, 29, 149) -6.25% 6.25%,rgb(69, 25, 136) 0 18.75%);
+    background-size: 90px 90px;
+    nb-layout-column {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      nb-card {
+        max-width: 600px;
+        width: 100%;
+        height: auto !important;
+        nb-card-body {
+          padding: 30px
+        }
+      }
+    }
+  }
+}

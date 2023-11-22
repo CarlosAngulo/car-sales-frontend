@@ -16,7 +16,7 @@ const adminRoutes: Routes = [
       },
       {
         path: 'users',
-        component: UsersComponent
+        component: UsersComponent,
       },
       {
         path: 'reports',

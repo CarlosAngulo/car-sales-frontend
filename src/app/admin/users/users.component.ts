@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { IUserDTO } from 'src/app/models/user.model';
 import { UsersGateway } from './domain/users-gateway';
+import { NbDialogService } from '@nebular/theme';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-users',
@@ -13,7 +16,8 @@ export class UsersComponent {
   showCreateUserComponent = false;
 
   constructor(
-    private readonly usersService: UsersGateway
+    private readonly usersService: UsersGateway,
+    private readonly dialogService: NbDialogService
     ) {
     this.loadUsers();
     const authAppToken = localStorage.getItem('auth_app_token');
@@ -41,11 +45,29 @@ export class UsersComponent {
     this.loadUsers();
   }
 
-  deleteUser(id: string) {
-    this.usersService.deleteUser(id).subscribe(
-      (resp) => {
-        this.loadUsers();
+  deleteUser(userId: string) {
+    this.dialogService.open(ConfirmDialogComponent, {
+      context: {
+        icon: 'alert-triangle',
+        title: 'Delete User',
+        message: 'Are you sure you want to delete this user?'
       }
+    })
+    .onClose
+    .pipe(
+      switchMap((res: any) => res ? this.usersService.deleteUser(userId) : of(false))
     )
+    .subscribe((res: any) => {
+      if (res) { this.loadUsers() }
+    });
   }
+
+  emailUser(userId: string) {
+    console.log('email User')
+  }
+  
+  editUser(userId: string) {
+    console.log('edit User')
+  }
+  
 }

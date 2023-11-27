@@ -6,8 +6,10 @@ import {
     NbRegisterComponent,
     NbLogoutComponent,
     NbRequestPasswordComponent,
-    NbResetPasswordComponent,
+    NbResetPasswordComponent
   } from '@nebular/auth';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { LoginRedirectComponent } from './components/login-redirect/login-redirect.component';
 
 export const authRoutes: Routes = [
     {
@@ -16,19 +18,11 @@ export const authRoutes: Routes = [
         children: [
             {
                 path: '',
-                component: NbLoginComponent,
+                component: LoginRedirectComponent,
             },
             {
                 path: 'login',
                 component: NbLoginComponent,
-            },
-            {
-                path: 'register',
-                component: NbRegisterComponent,
-            },
-            {
-                path: 'logout',
-                component: NbLogoutComponent,
             },
             {
                 path: 'request-password',
@@ -36,14 +30,20 @@ export const authRoutes: Routes = [
             },
             {
                 path: 'reset-password',
-                component: NbResetPasswordComponent,
+                component: ResetPasswordComponent,
             },
+            {
+                path: '**',
+                redirectTo: 'login'
+            }
         ],
     },
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(authRoutes)],
+    imports: [
+        RouterModule.forChild(authRoutes)
+    ],
     exports: [RouterModule]
 })
 export class AuthRoutingModule {}

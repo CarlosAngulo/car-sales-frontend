@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { NbDialogRef } from '@nebular/theme';
 import { Papa } from 'ngx-papaparse';
@@ -26,7 +25,6 @@ export class UploadComponent {
   }
 
   constructor(
-    private http: HttpClient,
     protected ref: NbDialogRef<any>,
     private papa: Papa
   ) {}

@@ -17,7 +17,9 @@ import {
   NbDatepickerModule,
   NbDialogModule,
   NbSelectModule,
-  NbSpinnerModule
+  NbSpinnerModule,
+  NbContextMenuModule,
+  NbPopoverModule
 } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { AdminComponent } from './admin.component';
@@ -59,9 +61,11 @@ import { StoresService } from './stores/infraestructure/stores.service';
     NbAuthModule,
     NbFormFieldModule,
     NbInputModule,
+    NbPopoverModule,
     NbToggleModule,
     NbSelectModule,
     NbTreeGridModule,
+    NbContextMenuModule,
     SharedModule,
     NbDialogModule.forRoot(),
     NbSidebarModule.forRoot(),

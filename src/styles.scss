@@ -40,4 +40,11 @@ nb-auth {
       }
     }
   }
+  nb-card-header,
+  a[href="/auth/register"],
+  section[aria-label="Register"],
+  .form-control-group.accept-group
+  {
+    display: none !important;
+  }
 }

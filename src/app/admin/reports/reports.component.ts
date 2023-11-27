@@ -149,11 +149,11 @@ export class ReportsComponent implements OnInit {
     this.reportForm = this.fb.group({
       client: ['', [Validators.required]],
       salesPerson: ['', [Validators.required]],
-      picture: [false, [this.formValidators.booleanValidator()]],
-      paid: [null, [this.formValidators.numericValidator()]],
-      positive: [null, [this.formValidators.booleanValidator()]],
-      rating: [null, [this.formValidators.numericValidator()]],
-      submitted: [null, [this.formValidators.dateValidator()]],
+      picture: [false, [this.formValidators.boolean()]],
+      paid: [null, [this.formValidators.numeric()]],
+      positive: [null, [this.formValidators.boolean()]],
+      rating: [null, [this.formValidators.numeric()]],
+      submitted: [null, [this.formValidators.date()]],
       platform: [null, []],
     })
   }
@@ -240,7 +240,10 @@ export class ReportsComponent implements OnInit {
 
   deleteRegister(dialog: TemplateRef<any>, reportID: string) {
     this.dialogService.open(dialog, {
-      context: 'this is some additional data passed to dialog'
+      context: {
+        title: 'Delete',
+        message: 'Are you sure you want to delete this register?'
+      }
     })
     .onClose
     .pipe(

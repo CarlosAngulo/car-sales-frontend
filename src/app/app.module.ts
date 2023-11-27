@@ -51,14 +51,28 @@ import { AuthService } from './auth/infraestrcuture/auth.service';
               failure: null,
             },
           },
-          register: {
-            endpoint: '/api/auth/register',
+          requestPass: {
+            endpoint: '/auth/forgot-password',
+            method: 'post',
+            redirect: {
+              success: null,
+              failure: null,
+            },
           },
+          resetPass: {
+            endpoint: '/auth/reset-password',
+            method: 'post',
+            redirect: {
+              success: null,
+              failure: null
+            },
+            resetPasswordTokenKey: 'token'
+          }
         }),
       ],
       forms: {
         login: {
-          redirectDelay: 500
+          redirectDelay: 200
         }
       },
     }),

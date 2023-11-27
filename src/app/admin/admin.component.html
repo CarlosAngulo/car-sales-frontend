@@ -5,6 +5,8 @@
                 *ngIf="user"
                 [name]="user.name"
                 [title]="user.role"
+                [nbContextMenu]="userMenu"
+                nbContextMenuTag="userContextMenu"
                 badgeStatus="success"
                 badgePosition="bottom right">
             </nb-user>

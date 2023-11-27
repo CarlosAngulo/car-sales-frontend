@@ -10,7 +10,8 @@ import { environment } from '../../environment/environment';
 })
 export class AuthService extends AuthGateway {
 
-    url = `${environment.apiURL}/auth`;
+    private url = `${environment.apiURL}/auth`;
+    private _refreshToken = '';
 
     constructor(private http: HttpClient) {
         super();
@@ -39,8 +40,28 @@ export class AuthService extends AuthGateway {
 
     setLocalStorage(tokens: ITokenTypes) {
         console.log('>>>> setting localStorage', tokens)
+        this._refreshToken = tokens.refresh.token;
         localStorage.setItem('accessToken', tokens.access.token );
         localStorage.setItem('accessTokenExpiration', tokens.access.expires);
         // localStorage.removeItem('auth_app_token'); 
+    }
+    
+    deleteLocalStorage() {
+        console.log('>>>> removing localStorage')
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('accessTokenExpiration');
+        localStorage.removeItem('auth_app_token');
+    }
+
+    get refreshTokenString(): string {
+        return this._refreshToken;
+    }
+
+    logout(refreshToken:string) {
+        const url = `${this.url}/logout`;
+        return this.http.post<ITokenTypes>(url, { refreshToken })
+        .pipe(
+            tap(() =>this.deleteLocalStorage())
+        )
     }
 }

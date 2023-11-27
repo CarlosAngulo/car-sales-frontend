@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
         if (this.isSessionActive()) {
             return true;
         } else {
-            this.router.navigate(['/auth']);
+            this.router.navigate(['/auth/login']);
             return false;
         }
     }
@@ -26,7 +26,10 @@ export class AuthGuard implements CanActivate {
     isSessionActive(): boolean {
         const authAppToken = localStorage.getItem('auth_app_token');
         if (!authAppToken) return false;
-        const expiration: string = JSON.parse(authAppToken).value.tokens.access.expires;
+        console.log(JSON.parse(authAppToken).value)
+        const expiration: string = JSON.parse(authAppToken).value?.tokens?.access?.expires || JSON.parse(authAppToken).value?.access?.expires;
+        console.log(expiration)
+        if (!expiration) return false;
 
         const milliseconds = new Date(expiration).getTime() - new Date().getTime();
 

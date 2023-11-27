@@ -8,7 +8,7 @@ export class FormValidatorsService {
 
   constructor() { }
 
-  booleanValidator(required: boolean = false) {
+  boolean(required: boolean = false) {
     return (control: AbstractControl) => {
       const value = control.value;
       if (typeof value !== 'boolean' && required) {
@@ -18,7 +18,7 @@ export class FormValidatorsService {
     };
   }
 
-  numericValidator(required: boolean = false) {
+  numeric(required: boolean = false) {
     return (control: AbstractControl) => {
       const value = control.value;
       if ((value === null || isNaN(value)) && required) {
@@ -28,7 +28,7 @@ export class FormValidatorsService {
     };
   }
 
-  dateValidator(required: boolean = false) {
+  date(required: boolean = false) {
     return (control: AbstractControl) => {
       const value = control.value;
       if ((!(value instanceof Date) || isNaN(value.getTime())) && required) {
@@ -36,5 +36,13 @@ export class FormValidatorsService {
       }
       return null;
     };
+  }
+
+  password(required: boolean = true) {
+    return (control: AbstractControl) => {
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+      const value = control.value;
+      return passwordRegex.test(value) ? null : { notPassword: true};
+    }
   }
 }

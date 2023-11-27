@@ -25,11 +25,31 @@
                     badgeStatus="success"
                     badgePosition="bottom right">
             </nb-user>
-            <div class="card-actions">
+            <div class="card-actions gap-3">
                 <span>{{user.email}}</span>
-                <button nbButton (click)="deleteUser(user.id)">
+                <button
+                    nbButton
+                    nbPopover="Delete user"
+                    nbPopoverTrigger="hint"
+                    nbPopoverPlacement="top"
+                    (click)="deleteUser(user.id)">
                     <nb-icon icon="trash-2-outline"></nb-icon>
-                    Delete
+                </button>
+                <button
+                    nbButton
+                    nbPopover="Edit user"
+                    nbPopoverTrigger="hint"
+                    nbPopoverPlacement="top"
+                    (click)="editUser(user.id)">
+                    <nb-icon icon="edit-outline"></nb-icon>
+                </button>
+                <button
+                    nbButton
+                    nbPopover="Reset password"
+                    nbPopoverTrigger="hint"
+                    nbPopoverPlacement="top"
+                    (click)="emailUser(user.id)">
+                    <nb-icon icon="email-outline"></nb-icon>
                 </button>
             </div>
         </div>

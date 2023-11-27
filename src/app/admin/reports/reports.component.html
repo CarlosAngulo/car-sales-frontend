@@ -337,11 +337,13 @@
             <nb-card-header>
                 <h4>
                     <nb-icon icon="alert-triangle-outline"></nb-icon>
-                    Delete Register
+                    {{ data.title }}
                 </h4>
             </nb-card-header>
             <nb-card-body>
-                {{ data }}
+                <p class="texto">
+                    {{ data.message }}
+                </p>
             </nb-card-body>
             <nb-card-footer>
                 <div class="flex gap-3 justify-end">

@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
-import { Observable, mergeMap, of, switchMap, take, tap, timer } from "rxjs";
+import { Observable, of, switchMap, take, tap, timer } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { ITokenTypes, ITokensDTO } from "src/app/models/auth.model";
+import { IAuthDTO, ITokenTypes } from "src/app/models/auth.model";
 import { AuthGateway } from "../domain/auth-gateway";
 import { environment } from '../../environment/environment';
+import { UserService } from "src/app/user/user.service";
 
 @Injectable({
     providedIn: 'root'
@@ -13,16 +14,26 @@ export class AuthService extends AuthGateway {
     private url = `${environment.apiURL}/auth`;
     private _refreshToken = '';
 
-    constructor(private http: HttpClient) {
+    constructor(
+        private http: HttpClient,
+        private userService: UserService
+    ) {
         super();
     }
 
-    refreshToken(refreshToken: string): Observable<ITokenTypes> {
+    refreshToken(refreshToken: string): Observable<IAuthDTO> {
         const url = `${this.url}/refresh-tokens`;
-        return this.http.post<ITokenTypes>(url, { refreshToken });
+        return this.http.post<IAuthDTO>(url, { refreshToken })
+        .pipe(
+            tap({
+                next: (res) => {
+                    this.userService.user = res.data.user;
+                }
+            })
+        );
     }
 
-    autoRefreshToken(timeLeft: number, refreshToken: string) {
+    autoRefreshToken(timeLeft: number, refreshToken: string): Observable<IAuthDTO> {
         return timer(timeLeft)
         .pipe(
             take(1),
@@ -43,7 +54,6 @@ export class AuthService extends AuthGateway {
         this._refreshToken = tokens.refresh.token;
         localStorage.setItem('accessToken', tokens.access.token );
         localStorage.setItem('accessTokenExpiration', tokens.access.expires);
-        // localStorage.removeItem('auth_app_token'); 
     }
     
     deleteLocalStorage() {
@@ -64,4 +74,6 @@ export class AuthService extends AuthGateway {
             tap(() =>this.deleteLocalStorage())
         )
     }
+
+
 }

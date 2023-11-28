@@ -1,16 +1,18 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef } from '@angular/core';
 import { UsersGateway } from '../users/domain/users-gateway';
 import { IUserDTO } from 'src/app/models/user.model';
 import { IDropdownOption } from 'src/app/shared/dropdown/dropdown.component';
 import { NbComponentSize, NbDialogService } from '@nebular/theme';
 import { ReportsGateway } from './domain/reports-gateway';
 import { IReportDTO } from 'src/app/models/report.model';
-import { Observable, catchError, forkJoin, of, switchMap, tap } from 'rxjs';
+import { Observable, catchError, delay, forkJoin, of, switchMap, tap } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormValidatorsService } from 'src/app/shared/services/form-validators.service';
-import { UploadComponent } from '../upload/upload.component';
 import { StoresGateway } from '../stores/domain/stores-gateway';
 import { IPaginationDTO, IPaginationMeta } from 'src/app/models/pagination.model';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { CSVMapper } from '../reports/mappers/csv.mapper';
+import { Papa } from 'ngx-papaparse';
 
 @Component({
   selector: 'app-reports',
@@ -52,7 +54,8 @@ export class ReportsComponent implements OnInit {
     private readonly storesService: StoresGateway,
     private readonly dialogService: NbDialogService,
     private readonly fb: FormBuilder,
-    private readonly formValidators: FormValidatorsService
+    private readonly formValidators: FormValidatorsService,
+    private readonly papa: Papa
   ) { }
 
   ngOnInit(): void {
@@ -92,9 +95,7 @@ export class ReportsComponent implements OnInit {
       })
     )
     .subscribe(([reports, users]) => {
-
-      this.users = users.results
-        
+      this.users = users.results;
       this.salesPeople = users.results.map((user) => ({
         label: user.name,
         value: user.id
@@ -115,8 +116,6 @@ export class ReportsComponent implements OnInit {
       totalPages: reports.totalPages,
       totalResults: reports.totalResults
     };
-
-    console.log(reports)
     
     this.reports = reports.results.map((report) => ({
       ...report,
@@ -125,15 +124,12 @@ export class ReportsComponent implements OnInit {
         return id === report.salesPerson
       })
     }))
+    console.log(this.reports)
   }
 
   editReport(id: string = '') {
     this.currentReportEdit = id;
     this.isNewReportVisible = false;
-  }
-
-  onUserSelected(event: IDropdownOption, index: number) {
-    const selectedUser = this.users.find((user) => user.id === event.value);
   }
 
   showAddReport(val: boolean = true) {
@@ -187,26 +183,22 @@ export class ReportsComponent implements OnInit {
   }
 
   onEditReportRecordSubmit() {
-    console.log('submitiendo', this.currentEditedReport)
     if (this.currentEditedReport?.id) {
       this.reportsService.updateReport(this.currentEditedReport?.id, this.currentEditedReport)
       .pipe(
         switchMap((res) => {
-          console.log('updated ', res);
           this.currentReportEdit = '';
           this.currentEditedReport = undefined;
           return this.getReports$();
         })
       )
-      .subscribe(res => {
+      .subscribe((res) =>{
         this.loadReportList(res);
       })
     }
   }
 
-  updateReport(value: any, field: string, id: string, textfield?: boolean) {
-    if (this.revisionMode) return;
-
+  updateReport(value: any, field: keyof IReportDTO, id: string | number, textfield?: boolean) {
     if (textfield) {
       value = value.srcElement?.value
     }
@@ -214,6 +206,16 @@ export class ReportsComponent implements OnInit {
     if (value.label) {
       value = value.value;
     }
+
+    if (this.revisionMode) {
+      const index = Number(id);
+      let currentRegister = {
+        ...this.reports[index],
+        [field]: field === 'salesPerson' ? this.users.find((salesPerson) => value === salesPerson.id) : value
+      };
+      this.reports[index] = currentRegister;
+      return;
+    };
     
     if (this.currentReportEdit) {
       if (!this.currentEditedReport) {
@@ -229,25 +231,28 @@ export class ReportsComponent implements OnInit {
           [field]: value
         }
       }
-      console.log(this.currentEditedReport)
       return;
     }
-
-    console.log(value, field, id)
-    this.reportsService.updateReport(id, { [field]: value })
+    
+    this.reportsService.updateReport(id.toString(), { [field]: value })
     .subscribe(res => console.log('updated ', res))
   }
 
-  deleteRegister(dialog: TemplateRef<any>, reportID: string) {
-    this.dialogService.open(dialog, {
+  deleteRegister(reportID: string, index: number) {
+    if(this.revisionMode) {
+      this.reports.splice(index, 1);
+      return;
+    }
+    this.dialogService.open(ConfirmDialogComponent, {
       context: {
-        title: 'Delete',
+        icon: 'alert-triangle',
+        title: 'Delete register',
         message: 'Are you sure you want to delete this register?'
       }
     })
     .onClose
     .pipe(
-      switchMap((deleting: boolean) => deleting ? this.reportsService.deleteReport(reportID) : of({}))
+      switchMap((deleting: boolean) => deleting ? this.reportsService.deleteReport(reportID.toString()) : of({}))
     )
     .subscribe((deletedReport: any) => {
       if (!deletedReport.id) return;
@@ -256,23 +261,49 @@ export class ReportsComponent implements OnInit {
     });
   }
 
-  uploadFile() {
-    this.dialogService.open(UploadComponent, {})
-    .onClose.subscribe((res: any) => {
-      this.selectedStore = undefined;
-      this.revisionMode = true;
-      this.reports = res;
-      console.table(res);
-    });
+  parseCSV(csvData: string) {
+    this.papa.parse(csvData,
+      {
+        header: true,
+        skipEmptyLines: true,
+        complete: (result) => {
+          this.uploadFile(new CSVMapper(result.data).mapped)
+        },
+        error: (error) => ({error})
+      }
+    );
+  }
+
+  onFileSelected(event: any) {
+    const file:File = event.target.files[0];
+    if (file?.name.endsWith('.csv')) {
+      const reader = new FileReader();
+      reader.onload = (e:any) => {
+        const csvData = e.target.result as string;
+        this.parseCSV(csvData);
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  uploadFile(data:any) {
+    if(data?.error) return; 
+    this.selectedStore = undefined;
+    this.revisionMode = true;
+    this.reports = data;
   }
 
   onSaveImport() {
     if (!this.selectedStore) return;
-
-    const reports = this.reports.map((report) => ({
-      ...report,
-      store: this.currentStoreName
-    }));
+    
+    const reports = this.reports.map((report) => {
+      const sales = report.salesPerson as IUserDTO;
+      return {
+        ...report,
+        salesPerson: sales.id,
+        store: this.currentStoreName
+      }
+    });
 
     this.reportsService.createMultipleReport(reports)
     .pipe(
@@ -282,7 +313,7 @@ export class ReportsComponent implements OnInit {
       if (!res.error) {
         this.revisionMode = false;
         this.getReports$()
-        .subscribe(this.loadReportList);
+        .subscribe((res) =>this.loadReportList(res));
       }
     });
   }
@@ -291,24 +322,16 @@ export class ReportsComponent implements OnInit {
     this.revisionMode = false;
     this.selectedStore = this.currentStoreName || this.stores[0].value;
     this.getReports$()
-    .subscribe((l) =>{
-      console.log(l)
-      this.loadReportList(l)
-    });
+    .subscribe((res) =>this.loadReportList(res));
   }
 
   onStoreSelect(event: IDropdownOption) {
-    console.log(event)
     this.getReports$()
-    .subscribe((res) =>{
-      this.loadReportList(res);
-    })
+    .subscribe((res) =>this.loadReportList(res))
   }
 
   onPageChange(event: number) {
     this.getReports$({'page': event})
-    .subscribe((res) =>{
-      this.loadReportList(res);
-    })
+    .subscribe((res) =>this.loadReportList(res))
   }
 }

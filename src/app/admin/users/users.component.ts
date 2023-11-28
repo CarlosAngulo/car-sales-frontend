@@ -50,7 +50,8 @@ export class UsersComponent {
       context: {
         icon: 'alert-triangle',
         title: 'Delete User',
-        message: 'Are you sure you want to delete this user?'
+        message: `<p>Are you sure you want to delete this user?</p>
+        <p>This element cannot be recovered after this operation.</p>`
       }
     })
     .onClose

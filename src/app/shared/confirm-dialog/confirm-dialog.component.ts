@@ -7,7 +7,7 @@ import { NbDialogRef } from '@nebular/theme';
   styleUrls: ['./confirm-dialog.component.scss']
 })
 export class ConfirmDialogComponent {
-  icon = '';
+  icon!: string;
   title = '';
   message = '';
   constructor( protected ref: NbDialogRef<ConfirmDialogComponent> ) {}

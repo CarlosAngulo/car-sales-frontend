@@ -15,6 +15,9 @@
     
             <button
                 nbButton
+                [nbPopover]="!selectedStore ? 'Please select a Store' : '' "
+                nbPopoverTrigger="hint"
+                nbPopoverPlacement="top"
                 status="primary"
                 size="large"
                 (click)="onSaveImport()"
@@ -57,7 +60,13 @@
                 </nb-form-field>
             </div>
             <div class="flex gap-3">
-                <button nbButton status="primary" size="large" (click)="uploadFile()">
+                <input
+                    type="file"
+                    class="hidden"
+                    accept=".csv"
+                    (change)="onFileSelected($event)"
+                    #fileUpload>
+                <button nbButton status="primary" size="large" (click)="fileUpload.click()">
                     <nb-icon icon="upload-outline"></nb-icon>
                     Upload
                 </button>
@@ -69,7 +78,11 @@
         </div>
     </ng-template>
     
-    <nb-card class="reports-list grow" [nbSpinner]="loading" nbSpinnerStatus="primary">
+    <nb-card
+        class="reports-list grow"
+        [class.bg-violet-100]="revisionMode"
+        [nbSpinner]="loading"
+        nbSpinnerStatus="primary">
         <nb-card-body>
             <form [formGroup]="reportForm" (ngSubmit)="onCreateReportSubmit()">
                 <table class="divide-muted-200 dark:divide-muted-700 min-w-full table-fixed divide-y mb-5">
@@ -81,7 +94,9 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-muted-200 dark:divide-muted-700 dark:bg-muted-800 divide-y" [class.bg-violet-100]="revisionMode">
+                    <tbody
+                        class="divide-muted-200 dark:divide-muted-700 dark:bg-muted-800 divide-y"
+                        [class.bg-violet-100]="revisionMode">
                         <ng-container *ngIf="isNewReportVisible">
                             <tr class="bg-violet-100">
                                 <td class="text-sm text-muted-500 dark:text-white p-1">
@@ -167,13 +182,13 @@
                             *ngFor="let report of reports; let i = index"
                             [class.bg-violet-100]="currentReportEdit === report.id">
                             <td class="whitespace-nowrap text-sm text-muted-500 dark:text-white p-1">
-                                <ng-container *ngIf="currentReportEdit === report.id || !report.client; else inputClient">
+                                <ng-container *ngIf="currentReportEdit === report.id || !report.client || revisionMode; else inputClient">
                                     <input
                                         type="text"
                                         class="w-44"
                                         [value]="report.client || ''"
-                                        (blur)="updateReport($event, 'client', report.id, true)"
-                                        (keydown.enter)="updateReport($event, 'client', report.id, true)"
+                                        (blur)="updateReport($event, 'client', report.id || i, true)"
+                                        (keydown.enter)="updateReport($event, 'client', report.id || i, true)"
                                         nbInput
                                         fieldSize="small">
                                 </ng-container>
@@ -182,9 +197,9 @@
                                 </ng-template>
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-500 dark:text-white p-1">
-                                <ng-container *ngIf="currentReportEdit === report.id || !report.salesPerson; else inputSalesPerson">
+                                <ng-container *ngIf="currentReportEdit === report.id || !report.salesPerson || revisionMode; else inputSalesPerson">
                                     <app-dropdown
-                                        (onOptionChange)="updateReport($event, 'salesPerson', report.id)"
+                                        (onOptionChange)="updateReport($event, 'salesPerson', report.id || i)"
                                         [value]="report.salesPerson | dropdownOption:['name','id']"
                                         [fieldSize]="'small'"
                                         [options]="salesPeople">
@@ -195,9 +210,9 @@
                                 </ng-template>
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 uppercase text-center">
-                                <ng-container *ngIf="currentReportEdit === report.id || report.picture === undefined || report.picture === null; else inputPicture">
+                                <ng-container *ngIf="currentReportEdit === report.id || report.picture === undefined || report.picture === null || revisionMode; else inputPicture">
                                     <app-dropdown
-                                        (onOptionChange)="updateReport($event, 'picture', report.id)"
+                                        (onOptionChange)="updateReport($event, 'picture', report.id || i)"
                                         [value]="report.picture"
                                         [fieldSize]="'small'"
                                         [class]="'w-20 text-center'"
@@ -209,13 +224,13 @@
                                 </ng-template>
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 uppercase text-center">
-                                <ng-container *ngIf="currentReportEdit === report.id || !report.paid; else inputPaid">
+                                <ng-container *ngIf="currentReportEdit === report.id || !report.paid || revisionMode; else inputPaid">
                                     <input
                                         type="number"
                                         class="text-right w-20"
                                         [value]="report.paid || ''"
-                                        (blur)="updateReport($event, 'paid', report.id, true)"
-                                        (keydown.enter)="updateReport($event, 'paid', report.id, true)"
+                                        (blur)="updateReport($event, 'paid', report.id || i, true)"
+                                        (keydown.enter)="updateReport($event, 'paid', report.id || i, true)"
                                         nbInput
                                         fieldSize="small">
                                 </ng-container>
@@ -224,9 +239,9 @@
                                 </ng-template>
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 uppercase text-center">
-                                <ng-container *ngIf="currentReportEdit === report.id || report.positive === undefined || report.positive === null; else inputPositive">
+                                <ng-container *ngIf="currentReportEdit === report.id || report.positive === undefined || report.positive === null || revisionMode; else inputPositive">
                                     <app-dropdown
-                                        (onOptionChange)="updateReport($event, 'positive', report.id)"
+                                        (onOptionChange)="updateReport($event, 'positive', report.id || i)"
                                         [fieldSize]="'small'"
                                         [value]="report.positive"
                                         [class]="'w-20 text-center'"
@@ -238,12 +253,12 @@
                                 </ng-template>
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 text-center">
-                                <ng-container *ngIf="currentReportEdit === report.id || !report.rating; else inputRating">
+                                <ng-container *ngIf="currentReportEdit === report.id || !report.rating || revisionMode; else inputRating">
                                     <input
                                         type="number"
                                         [value]="report.rating || ''"
-                                        (blur)="updateReport($event, 'rating', report.id, true)"
-                                        (keydown.enter)="updateReport($event, 'rating', report.id, true)"
+                                        (blur)="updateReport($event, 'rating', report.id || i, true)"
+                                        (keydown.enter)="updateReport($event, 'rating', report.id || i, true)"
                                         class="text-right w-20"
                                         nbInput
                                         fieldSize="small">
@@ -253,7 +268,7 @@
                                 </ng-template>
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 text-center">
-                                <ng-container *ngIf="currentReportEdit === report.id || !report.submitted; else inputSubmitted">
+                                <ng-container *ngIf="currentReportEdit === report.id || !report.submitted || revisionMode; else inputSubmitted">
                                     <input
                                         nbInput
                                         class="text-center w-36"
@@ -264,7 +279,7 @@
                                         format="dd.MM.yyyy">
                                     <nb-datepicker
                                         #datepicker
-                                        (dateChange)="updateReport($event, 'submitted', report.id)">
+                                        (dateChange)="updateReport($event, 'submitted', report.id || i)">
                                     </nb-datepicker>
                                 </ng-container>
                                 <ng-template #inputSubmitted>
@@ -272,12 +287,12 @@
                                 </ng-template>
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 text-center">
-                                <ng-container *ngIf="currentReportEdit === report.id ||!report.platform; else inputPlatform">
+                                <ng-container *ngIf="currentReportEdit === report.id ||!report.platform || revisionMode; else inputPlatform">
                                     <input
                                         type="string"
                                         [value]="report.platform || ''"
-                                        (blur)="updateReport($event, 'platform', report.id, true)"
-                                        (keydown.enter)="updateReport($event, 'platform', report.id, true)"
+                                        (blur)="updateReport($event, 'platform', report.id || i, true)"
+                                        (keydown.enter)="updateReport($event, 'platform', report.id || i, true)"
                                         class="text-center w-32"
                                         nbInput
                                         fieldSize="small">
@@ -307,6 +322,7 @@
                                     </ng-container>
                                     <ng-template #inputActions>
                                         <button
+                                            *ngIf="!revisionMode"
                                             nbButton
                                             type="button"
                                             size="small"
@@ -319,7 +335,7 @@
                                             type="button"
                                             size="small"
                                             status="danger"
-                                            (click)="deleteRegister(dialog, report.id)">
+                                            (click)="deleteRegister(report.id, i)">
                                             <nb-icon icon="trash-outline"></nb-icon>
                                         </button>
                                     </ng-template>
@@ -331,28 +347,6 @@
             </form>
         </nb-card-body>
     </nb-card>
-    
-    <ng-template #dialog let-data let-ref="dialogRef">
-        <nb-card>
-            <nb-card-header>
-                <h4>
-                    <nb-icon icon="alert-triangle-outline"></nb-icon>
-                    {{ data.title }}
-                </h4>
-            </nb-card-header>
-            <nb-card-body>
-                <p class="texto">
-                    {{ data.message }}
-                </p>
-            </nb-card-body>
-            <nb-card-footer>
-                <div class="flex gap-3 justify-end">
-                    <button nbButton status="primary" (click)="ref.close(true)">Aceptar</button>
-                    <button nbButton status="danger" (click)="ref.close(false)">Cancel</button>
-                </div>
-            </nb-card-footer>
-        </nb-card>
-    </ng-template>
     
     <app-pagination [pagination]="pagination" (onPageChange)="onPageChange($event)"></app-pagination>
 </div>

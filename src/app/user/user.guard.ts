@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from './infraestrcuture/auth.service';
-import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class UserGuard implements CanActivate {
     constructor(
-        private router: Router,
-        private userService: UserService
+        private router: Router
     ) {}
 
     canActivate(
@@ -30,7 +27,7 @@ export class AuthGuard implements CanActivate {
         const authAppToken = localStorage.getItem('auth_app_token');
         if (!authAppToken) return false;
         console.log(JSON.parse(authAppToken).value)
-        const expiration: string = JSON.parse(authAppToken).value?.tokens?.access?.expires;
+        const expiration: string = JSON.parse(authAppToken).value?.tokens?.access?.expires || JSON.parse(authAppToken).value?.access?.expires;
         console.log(expiration)
         if (!expiration) return false;
 

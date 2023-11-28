@@ -62,8 +62,9 @@ export class AdminComponent implements OnInit, OnDestroy {
           expirationDate = userData.token.tokens.access.expires;
           tokens = userData.token.tokens;
 
-          timeToRenovate = new Date(expirationDate).getTime() - new Date().getTime() - 50000;
+          // timeToRenovate = new Date(expirationDate).getTime() - new Date().getTime() - 50000;
           // timeToRenovate = new Date(expirationDate).getTime() - new Date().getTime() - 1795000;
+          timeToRenovate = new Date(expirationDate).getTime() - new Date().getTime() - 120000;
           this.authService.setLocalStorage(tokens);
           return this.authService.autoRefreshTokenTimer(timeToRenovate, tokens.refresh.token);
 

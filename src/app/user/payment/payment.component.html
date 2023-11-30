@@ -1,0 +1,86 @@
+<div class="flex justify-center mb-4 gap-4">
+    <nb-form-field>
+        <nb-icon nbPrefix icon="calendar-outline"></nb-icon>
+        <input
+            nbInput
+            placeholder="Pick Date Range"
+            [nbDatepicker]="formpicker">
+        <nb-rangepicker
+            #formpicker
+            (rangeChange)="onDateRangeSelected($event)">
+        </nb-rangepicker>
+    </nb-form-field>
+</div>
+
+<div *ngIf="reports; else noResults">
+    <nb-card>
+        <nb-card-body>
+            <ng-container *ngIf="totalReviews === 0; else reviews">
+                <p>There are no reviews during this period</p>
+            </ng-container>
+            <ng-template #reviews>
+                <div class="flex gap-4 justify-evenly">
+                    <div class="flex flex-col gap-3 justify-center">
+                        <span class="text-3xl text-center font-bold">{{ totalReviews }}</span>
+                        <span class="uppercase font-bold text-center text-slate-400">Reviews</span>
+                    </div>
+                    <div class="flex flex-col gap-3 justify-center">
+                        <span class="text-3xl text-center font-bold">${{ paid }}</span>
+                        <span class="uppercase font-bold text-center text-slate-400">Paid</span>
+                    </div>
+                </div>
+            </ng-template>
+        </nb-card-body>
+    </nb-card>
+
+    <nb-accordion
+        *ngIf="totalReviews > 0"
+        [nbSpinner]="loading"
+        nbSpinnerStatus="primary">
+        <nb-accordion-item>
+            <nb-accordion-item-header>Show Reviews</nb-accordion-item-header>
+            <nb-accordion-item-body>
+                <table class="divide-muted-200 min-w-full table-fixed divide-y mb-5">
+                    <thead>
+                        <tr>
+                            <th *ngFor="let header of tableHeaders"
+                                class="text-muted-700 text-center font-sans font-bold text-sm uppercase border-muted-200 p-2 even:bg-gray-100">
+                                {{ header }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let report of reports; let i = index">
+                            <td class="whitespace-nowrap text-sm text-muted-500 p-2">
+                                {{ report.client }}
+                            </td>
+                            <td class="whitespace-nowrap text-sm text-muted-500 p-2 text-right bg-gray-100">
+                                ${{ report.paid }}
+                            </td>
+                            <td class="whitespace-nowrap text-sm text-muted-500 p-2 uppercase text-center">
+                                {{ report.positive | booleanToString }}
+                            </td>
+                            <td class="whitespace-nowrap text-sm text-muted-500 p-2 text-center bg-gray-100">
+                                {{ report.rating }}
+                            </td>
+                            <td class="whitespace-nowrap text-sm text-muted-500 p-2 text-center">
+                                {{ report.submitted | date:"mediumDate" }}
+                            </td>
+                            <td class="whitespace-nowrap text-sm text-muted-500 p-2 uppercase text-center bg-gray-100">
+                                {{ report.store }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </nb-accordion-item-body>
+        </nb-accordion-item>
+    </nb-accordion>
+</div>
+
+<ng-template #noResults>
+    <nb-card>
+        <nb-card-body>
+            <p>Please select a date range.</p>
+        </nb-card-body>
+    </nb-card>
+</ng-template>

@@ -31,7 +31,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       tap({
         error: (err) => {
           if (err instanceof HttpErrorResponse && err.status === 401) {
-            this.router.navigate(['/auth']);
+            this.router.navigate(['/auth/login']);
           }
         }
       })

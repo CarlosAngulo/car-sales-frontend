@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
-import { AuthService } from './infraestrcuture/auth.service';
+import { Observable, forkJoin, map, tap } from 'rxjs';
 import { UserService } from '../user/user.service';
+import { Roles } from '../models/user.model';
+import { NbAuthService } from '@nebular/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -10,28 +11,44 @@ import { UserService } from '../user/user.service';
 export class AuthGuard implements CanActivate {
     constructor(
         private router: Router,
-        private userService: UserService
+        private nbAuthService: NbAuthService,
     ) {}
 
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ) : boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
+        
+        return forkJoin([this.isAuthenticated(),this.isAdmin()])
+        .pipe(
+            map((res: boolean[]) => res[0] && res [1])
+        )
+    }
 
-        if (this.isSessionActive()) {
-            return true;
-        } else {
-            this.router.navigate(['/auth/login']);
-            return false;
-        }
+    isAuthenticated(): Observable<boolean> {
+        return this.nbAuthService.isAuthenticated()
+        .pipe( 
+            tap((authenticated: boolean ) =>!authenticated && this.router.navigate(['/auth/login']))
+        )
+    }
+
+    isAdmin(): Observable<boolean> {
+        return this.nbAuthService.getToken()
+        .pipe(
+            map((res: any) => {
+                if (res.getValue().user.role === Roles.ADMIN) {
+                    return true;
+                }
+                this.router.navigate(['/user'])
+                return false;
+            })
+        )
     }
 
     isSessionActive(): boolean {
         const authAppToken = localStorage.getItem('auth_app_token');
         if (!authAppToken) return false;
-        console.log(JSON.parse(authAppToken).value)
         const expiration: string = JSON.parse(authAppToken).value?.tokens?.access?.expires;
-        console.log(expiration)
         if (!expiration) return false;
 
         const milliseconds = new Date(expiration).getTime() - new Date().getTime();

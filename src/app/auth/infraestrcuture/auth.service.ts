@@ -5,6 +5,7 @@ import { IAuthDTO, ITokenTypes } from "src/app/models/auth.model";
 import { AuthGateway } from "../domain/auth-gateway";
 import { environment } from '../../environment/environment';
 import { UserService } from "src/app/user/user.service";
+import { IUserDTO, Roles, TRole } from "src/app/models/user.model";
 
 @Injectable({
     providedIn: 'root'
@@ -49,15 +50,14 @@ export class AuthService extends AuthGateway {
         )
     }
 
-    setLocalStorage(tokens: ITokenTypes) {
-        console.log('>>>> setting localStorage', tokens)
+    setLocalStorage(user: IUserDTO, tokens: ITokenTypes) {
+        this.userService.user = user;
         this._refreshToken = tokens.refresh.token;
         localStorage.setItem('accessToken', tokens.access.token );
         localStorage.setItem('accessTokenExpiration', tokens.access.expires);
     }
     
     deleteLocalStorage() {
-        console.log('>>>> removing localStorage')
         localStorage.removeItem('accessToken');
         localStorage.removeItem('accessTokenExpiration');
         localStorage.removeItem('auth_app_token');

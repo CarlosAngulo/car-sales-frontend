@@ -85,35 +85,35 @@
         nbSpinnerStatus="primary">
         <nb-card-body>
             <form [formGroup]="reportForm" (ngSubmit)="onCreateReportSubmit()">
-                <table class="divide-muted-200 dark:divide-muted-700 min-w-full table-fixed divide-y mb-5">
+                <table class="divide-muted-200 min-w-full table-fixed divide-y mb-5">
                     <thead [class.bg-violet-200]="revisionMode">
                         <tr>
                             <th *ngFor="let header of tableHeaders"
-                                class="text-muted-700 dark:text-muted-400 text-center font-sans font-bold text-sm uppercase border-muted-200 dark:border-muted-700 last:border-e-none dark:bg-muted-800 border-r p-3">
+                                class="text-muted-700 text-center font-sans font-bold text-sm uppercase border-muted-200 border-r p-3 last:border-e-none">
                                 {{ header }}
                             </th>
                         </tr>
                     </thead>
                     <tbody
-                        class="divide-muted-200 dark:divide-muted-700 dark:bg-muted-800 divide-y"
+                        class="divide-muted-200 divide-y"
                         [class.bg-violet-100]="revisionMode">
                         <ng-container *ngIf="isNewReportVisible">
                             <tr class="bg-violet-100">
-                                <td class="text-sm text-muted-500 dark:text-white p-1">
+                                <td class="text-sm text-muted-500">
                                     <input
                                         formControlName="client"
                                         type="text"
                                         nbInput
                                         fieldSize="small">
                                 </td>
-                                <td class="text-sm text-muted-500 dark:text-white p-1">
+                                <td class="text-sm text-muted-500">
                                     <app-dropdown
                                         (onOptionChange)="updateNewReport($event, 'salesPerson')"
                                         [fieldSize]="'small'"
                                         [options]="salesPeople">
                                     </app-dropdown>
                                 </td>
-                                <td class="text-sm text-muted-800 dark:text-white p-1 capitalize text-center">
+                                <td class="text-sm text-muted-800 capitalize text-center">
                                     <app-dropdown
                                         (onOptionChange)="updateNewReport($event, 'picture')"
                                         [class]="'w-20 text-center'"
@@ -121,7 +121,7 @@
                                         [options]="booleanDropOptions">
                                     </app-dropdown>
                                 </td>
-                                <td class="text-sm text-muted-800 dark:text-white p-1 capitalize text-center">
+                                <td class="text-sm text-muted-800 capitalize text-center">
                                     <input
                                         formControlName="paid"
                                         type="number"
@@ -129,7 +129,7 @@
                                         nbInput
                                         fieldSize="small">
                                 </td>
-                                <td class="text-sm text-muted-800 dark:text-white p-1 text-center">
+                                <td class="text-sm text-muted-800 text-center">
                                     <app-dropdown
                                         (onOptionChange)="updateNewReport($event, 'positive')"
                                         [class]="'w-20 text-center'"
@@ -137,7 +137,7 @@
                                         [options]="booleanDropOptions">
                                     </app-dropdown>
                                 </td>
-                                <td class="text-sm text-muted-800 dark:text-white p-1 text-center">
+                                <td class="text-sm text-muted-800 text-center">
                                     <input
                                         formControlName="rating"
                                         type="number"
@@ -145,7 +145,7 @@
                                         nbInput
                                         fieldSize="small">
                                 </td>
-                                <td class="text-sm text-muted-800 dark:text-white p-1 text-center">
+                                <td class="text-sm text-muted-800 text-center">
                                     <input
                                         nbInput
                                         formControlName="submitted"
@@ -156,7 +156,7 @@
                                         format="dd.MM.yyyy">
                                     <nb-datepicker #datepicker></nb-datepicker>
                                 </td>
-                                <td class="text-sm text-muted-800 dark:text-white p-1 text-center">
+                                <td class="text-sm text-muted-800 text-center">
                                     <input
                                         formControlName="platform"
                                         type="text"
@@ -181,7 +181,7 @@
                         <tr 
                             *ngFor="let report of reports; let i = index"
                             [class.bg-violet-100]="currentReportEdit === report.id">
-                            <td class="whitespace-nowrap text-sm text-muted-500 dark:text-white p-1">
+                            <td class="whitespace-nowrap text-sm text-muted-500">
                                 <ng-container *ngIf="currentReportEdit === report.id || !report.client || revisionMode; else inputClient">
                                     <input
                                         type="text"
@@ -196,7 +196,7 @@
                                     {{ report.client }}
                                 </ng-template>
                             </td>
-                            <td class="whitespace-nowrap text-sm text-muted-500 dark:text-white p-1">
+                            <td class="whitespace-nowrap text-sm text-muted-500">
                                 <ng-container *ngIf="currentReportEdit === report.id || !report.salesPerson || revisionMode; else inputSalesPerson">
                                     <app-dropdown
                                         (onOptionChange)="updateReport($event, 'salesPerson', report.id || i)"
@@ -209,7 +209,7 @@
                                     {{ report.salesPerson | userName }}
                                 </ng-template>
                             </td>
-                            <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 uppercase text-center">
+                            <td class="whitespace-nowrap text-sm text-muted-800 uppercase text-center">
                                 <ng-container *ngIf="currentReportEdit === report.id || report.picture === undefined || report.picture === null || revisionMode; else inputPicture">
                                     <app-dropdown
                                         (onOptionChange)="updateReport($event, 'picture', report.id || i)"
@@ -220,10 +220,10 @@
                                     </app-dropdown>
                                 </ng-container>
                                 <ng-template #inputPicture>
-                                    {{ report.picture | booeanToString }}
+                                    {{ report.picture | booleanToString }}
                                 </ng-template>
                             </td>
-                            <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 uppercase text-center">
+                            <td class="whitespace-nowrap text-sm text-muted-800 uppercase text-center">
                                 <ng-container *ngIf="currentReportEdit === report.id || !report.paid || revisionMode; else inputPaid">
                                     <input
                                         type="number"
@@ -238,7 +238,7 @@
                                     {{ report.paid }}
                                 </ng-template>
                             </td>
-                            <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 uppercase text-center">
+                            <td class="whitespace-nowrap text-sm text-muted-800 uppercase text-center">
                                 <ng-container *ngIf="currentReportEdit === report.id || report.positive === undefined || report.positive === null || revisionMode; else inputPositive">
                                     <app-dropdown
                                         (onOptionChange)="updateReport($event, 'positive', report.id || i)"
@@ -249,10 +249,10 @@
                                     </app-dropdown>
                                 </ng-container>
                                 <ng-template #inputPositive>
-                                    {{ report.positive | booeanToString }}
+                                    {{ report.positive | booleanToString }}
                                 </ng-template>
                             </td>
-                            <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 text-center">
+                            <td class="whitespace-nowrap text-sm text-muted-800 text-center">
                                 <ng-container *ngIf="currentReportEdit === report.id || !report.rating || revisionMode; else inputRating">
                                     <input
                                         type="number"
@@ -267,7 +267,7 @@
                                     {{ report.rating }}
                                 </ng-template>
                             </td>
-                            <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 text-center">
+                            <td class="whitespace-nowrap text-sm text-muted-800 text-center">
                                 <ng-container *ngIf="currentReportEdit === report.id || !report.submitted || revisionMode; else inputSubmitted">
                                     <input
                                         nbInput
@@ -286,7 +286,7 @@
                                     {{ report.submitted | date:"mediumDate" }}
                                 </ng-template>
                             </td>
-                            <td class="whitespace-nowrap text-sm text-muted-800 dark:text-white p-1 text-center">
+                            <td class="whitespace-nowrap text-sm text-muted-800 text-center">
                                 <ng-container *ngIf="currentReportEdit === report.id ||!report.platform || revisionMode; else inputPlatform">
                                     <input
                                         type="string"

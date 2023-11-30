@@ -1,55 +1,47 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, map, tap } from 'rxjs';
+import { Roles } from '../models/user.model';
+import { NbAuthService } from '@nebular/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserGuard implements CanActivate {
     constructor(
-        private router: Router
+        private router: Router,
+        private nbAuthService: NbAuthService
     ) {}
 
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ) : boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-
-        if (this.isSessionActive()) {
-            return true;
-        } else {
-            this.router.navigate(['/auth/login']);
-            return false;
-        }
+        
+        return forkJoin([this.isAuthenticated(),this.isAdmin()])
+        .pipe(
+            map((res: boolean[]) => res[0] && res [1])
+        )
     }
 
-    isSessionActive(): boolean {
-        const authAppToken = localStorage.getItem('auth_app_token');
-        if (!authAppToken) return false;
-        console.log(JSON.parse(authAppToken).value)
-        const expiration: string = JSON.parse(authAppToken).value?.tokens?.access?.expires || JSON.parse(authAppToken).value?.access?.expires;
-        console.log(expiration)
-        if (!expiration) return false;
+    isAuthenticated(): Observable<boolean> {
+        return this.nbAuthService.isAuthenticated()
+        .pipe( 
+            tap((authenticated: boolean ) =>!authenticated && this.router.navigate(['/auth/login']))
+        )
+    }
 
-        const milliseconds = new Date(expiration).getTime() - new Date().getTime();
-
-        const seconds = Math.floor(milliseconds / 1000);
-
-        const minutes = Math.floor(seconds / 60);
-
-        const hours = Math.floor(minutes / 60);
-
-        const remainingHours = hours % 24;
-        const remainingMinutes = minutes % 60;
-        const remainingSeconds = seconds % 60;
-
-        if (milliseconds > 0) {
-            console.log(`Your session expires in: ${remainingHours} : ${remainingMinutes} : ${remainingSeconds} `);
-        } else {
-            console.log('Your session is expired!')
-        }
-
-        return new Date().getTime() < new Date(expiration).getTime();
+    isAdmin(): Observable<boolean> {
+        return this.nbAuthService.getToken()
+        .pipe(
+            map((res: any) => {
+                if (res.getValue().user.role === Roles.USER) {
+                    return true;
+                }
+                this.router.navigate(['/unauthorized'])
+                return false;
+            })
+        )
     }
 
 }

@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 
 export enum UserMenu {
   PROFILE = 'Profile',
-  LOGOUT = 'Logout'
+  LOGOUT = 'Logout',
 }
 
 @Component({
@@ -37,8 +37,9 @@ export class AdminComponent implements OnInit, OnDestroy {
       link: 'users'
     },
     {
-      title: 'Process',
-      icon: { icon: 'settings-2-outline', pack: 'eva' },
+      title: 'User',
+      link: '/user',
+      icon: 'person-outline',
     },
   ];
 
@@ -48,29 +49,26 @@ export class AdminComponent implements OnInit, OnDestroy {
     private nbMenuService: NbMenuService,
     private router: Router
   ) {
-    this.nbAuthService.onAuthenticationChange().subscribe(console.log)
-
     this.nbAuthService.onTokenChange()
       .pipe(
         takeUntil(this.unsubscribe$),
         switchMap((userData: any) => {
-          console.log('token changed')
           let expirationDate;
           let timeToRenovate: number;
           let tokens: ITokenTypes;
-          this.user = userData.token.user;
+          let user = userData.token.user;
+          this.user = user;
           expirationDate = userData.token.tokens.access.expires;
           tokens = userData.token.tokens;
 
           // timeToRenovate = new Date(expirationDate).getTime() - new Date().getTime() - 50000;
           // timeToRenovate = new Date(expirationDate).getTime() - new Date().getTime() - 1795000;
           timeToRenovate = new Date(expirationDate).getTime() - new Date().getTime() - 120000;
-          this.authService.setLocalStorage(tokens);
+          this.authService.setLocalStorage(user, tokens);
           return this.authService.autoRefreshTokenTimer(timeToRenovate, tokens.refresh.token);
 
         }),
         switchMap((token: string) => {
-          console.log('refreshing Token', token)
           return this.nbAuthService.refreshToken('email', { refreshToken: token })
         }),
       )

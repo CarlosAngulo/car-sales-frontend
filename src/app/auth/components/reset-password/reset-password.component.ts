@@ -40,14 +40,11 @@ export class ResetPasswordComponent implements OnInit {
       this.resetPasswForm.valueChanges.subscribe(
         (inputVal) => {
           this.inputValsMatch = inputVal.password === inputVal.confirmPassword
-          console.log(this.inputValsMatch, this.resetPasswForm.value)
         }
       )
   }
 
   onResetPassword() {
-    console.log(this.passwordStrategy)
-    console.log(this.resetPasswForm.value)
     this.passwordStrategy.resetPassword(this.resetPasswForm.value)
     .pipe(
       catchError((error) => error)

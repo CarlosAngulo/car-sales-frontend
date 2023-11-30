@@ -51,13 +51,10 @@ export class DropdownComponent implements OnInit, OnChanges {
 
   private selectOptionFromValue(): void {
     if (this.options && this.value !== undefined && this.value !== null) {
-      // console.log(this.options, this.value, this.value instanceof IDropdownOption)
       const value = typeof this.value === 'object' && 'label' in this.value && 'value' in this.value
         ? this.value.value
         : this.value;
-      // console.log(value)
       const option = this.options.find((item) => item.value === value);
-      // console.log(option)
       this.defaultValue = option?.label || '';
     }
   }

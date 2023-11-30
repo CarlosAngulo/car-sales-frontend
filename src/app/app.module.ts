@@ -15,10 +15,14 @@ import { environment } from './environment/environment';
 import { AuthTokenInterceptor } from './auth/auth-token.interceptor';
 import { AuthGateway } from './auth/domain/auth-gateway';
 import { AuthService } from './auth/infraestrcuture/auth.service';
+import { NotfoundComponent } from './pages/notfound/notfound.component';
+import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NotfoundComponent,
+    UnauthorizedComponent
   ],
   imports: [
     BrowserModule,

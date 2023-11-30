@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'booeanToString'
+  name: 'booleanToString'
 })
-export class BooeanToStringPipe implements PipeTransform {
+export class BooleanToStringPipe implements PipeTransform {
   transform(value: boolean | undefined): string {
     return value ? 'yes' : 'no';
   }

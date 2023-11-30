@@ -1,16 +1,57 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserComponent } from './user.component';
-import { UserRoutingModule } from './user.routing.module';
-
+import { UserRoutingModule } from './user-routing.module';
+import { PaymentComponent } from './payment/payment.component';
+import { ReportsGateway } from '../admin/reports/domain/reports-gateway';
+import { ReportsService } from '../admin/reports/infraestructure/report.service';
+import {
+  NB_TIME_PICKER_CONFIG,
+  NbAccordionModule,
+  NbActionsModule,
+  NbCardModule,
+  NbContextMenuModule,
+  NbDatepickerModule,
+  NbFormFieldModule,
+  NbIconModule,
+  NbInputModule,
+  NbLayoutModule,
+  NbRangepickerComponent,
+  NbSpinnerModule,
+  NbUserModule
+} from '@nebular/theme';
+import { ProfileComponent } from './profile/profile.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
-    UserComponent
+    UserComponent,
+    PaymentComponent,
+    ProfileComponent,
   ],
   imports: [
     CommonModule,
-    UserRoutingModule
+    NbIconModule,
+    NbFormFieldModule,
+    NbAccordionModule,
+    NbActionsModule,
+    NbCardModule,
+    NbContextMenuModule,
+    NbInputModule,
+    NbLayoutModule,
+    NbSpinnerModule,
+    NbUserModule,
+    RouterModule,
+    SharedModule,
+    UserRoutingModule,
+    NbDatepickerModule.forRoot(),
+  ],
+  providers: [
+    {
+      provide: ReportsGateway,
+      useClass: ReportsService
+    }
   ]
 })
 export class UserModule { }

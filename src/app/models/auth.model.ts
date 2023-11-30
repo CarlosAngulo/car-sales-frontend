@@ -10,8 +10,8 @@ export interface ITokenTypes {
     refresh: ITokens
 }
 
-export class ITokensDTO {
-    tokens!: ITokenTypes
+export interface ITokensDTO {
+    tokens: ITokenTypes
 }
 
 export interface IAuthDTO {

@@ -53,8 +53,6 @@ export class UploadComponent {
 
       if (file) {
           this.fileName = file.name;
-          console.log(file);
-
           if (file.name.endsWith('.csv')) {
             const reader = new FileReader();
             reader.onload = (e:any) => {

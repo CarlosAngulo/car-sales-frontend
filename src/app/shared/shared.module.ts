@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DropdownComponent } from './dropdown/dropdown.component';
 import { NbAutocompleteModule, NbButtonModule, NbCardModule, NbIconModule, NbInputModule } from '@nebular/theme';
 import { UserNamePipe } from './pipes/username.pipe';
-import { BooeanToStringPipe } from './pipes/boolean.pipe';
+import { BooleanToStringPipe } from './pipes/boolean.pipe';
 import { DropdownOptionPipe } from './pipes/dropdown-option.pipe';
 import { PaginationComponent } from './pagination/pagination.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
@@ -11,7 +11,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 @NgModule({
   declarations: [
     DropdownComponent,
-    BooeanToStringPipe,
+    BooleanToStringPipe,
     UserNamePipe,
     DropdownOptionPipe,
     PaginationComponent,
@@ -28,7 +28,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
   exports: [
     DropdownComponent,
     PaginationComponent,
-    BooeanToStringPipe,
+    BooleanToStringPipe,
     UserNamePipe,
     DropdownOptionPipe,
     ConfirmDialogComponent

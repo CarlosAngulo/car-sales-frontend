@@ -23,6 +23,11 @@ export class ReportsService extends ReportsGateway {
         return this.http.get<IPaginationDTO<IReportDTO>>(url)
     }
 
+    getByUser(queryParams:string): Observable<IPaginationDTO<IReportDTO>> {
+        const url = `${this.url}/reports/self?${queryParams}`;
+        return this.http.get<IPaginationDTO<IReportDTO>>(url)
+    }
+
     createReport(formBody: Partial<IReportDTO>): Observable<IReportDTO> {
         return this.http.post<IReportDTO>(`${this.url}/reports`, formBody)
     }

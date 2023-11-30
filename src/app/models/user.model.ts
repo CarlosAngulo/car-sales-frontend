@@ -1,9 +1,16 @@
 import { ITokensDTO } from "./auth.model"
 
-export class IUserDTO extends ITokensDTO {
-    id!: string;
-    name!: string;
-    email!: string;
-    role!: 'user' | 'admin';
+export enum Roles {
+    USER = 'user',
+    ADMIN = 'admin',
+}
+
+export type TRole = Roles.ADMIN | Roles.USER;
+
+export interface IUserDTO extends ITokensDTO {
+    id: string;
+    name: string;
+    email: string;
+    role: TRole;
     isEmailVerified?: false
 };

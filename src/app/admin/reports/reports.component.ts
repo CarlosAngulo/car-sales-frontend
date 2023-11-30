@@ -297,10 +297,10 @@ export class ReportsComponent implements OnInit {
     if (!this.selectedStore) return;
     
     const reports = this.reports.map((report) => {
-      const sales = report.salesPerson as IUserDTO;
+      const salesPerson = report.salesPerson as IUserDTO;
       return {
         ...report,
-        salesPerson: sales.id,
+        salesPerson: salesPerson?.id,
         store: this.currentStoreName
       }
     });

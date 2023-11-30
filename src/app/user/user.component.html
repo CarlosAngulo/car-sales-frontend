@@ -1,1 +1,26 @@
-<p>user works!</p>
+<nb-layout>
+    <nb-layout-header>
+        <div class="nav-header flex justify-between items-center gap-4 w-full">
+            <!-- <nb-card class="grow m-0">
+                <nb-card-body>
+                    <nb-actions size="small" fullWidth>
+                        <nb-action icon="person-outline" [routerLink]="'profile'"></nb-action>
+                        <nb-action icon="percent-outline" [routerLink]="'score'"></nb-action>
+                    </nb-actions>
+                </nb-card-body>
+            </nb-card> -->
+
+            <nb-user size="large"
+                *ngIf="user"
+                [name]="user.name"
+                [title]="user.role"
+                badgeStatus="success"
+                badgePosition="bottom right">
+            </nb-user>
+        </div>
+    </nb-layout-header>
+
+    <nb-layout-column>
+        <router-outlet></router-outlet>
+    </nb-layout-column>
+</nb-layout>

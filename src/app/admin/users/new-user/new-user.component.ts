@@ -33,7 +33,6 @@ export class NewUserComponent {
   }
 
   onRoleChange(event: boolean) {
-    console.log('>>>', event)
     this.createUserForm.get('role')?.patchValue(event ? 'admin' : 'user');
   }
 

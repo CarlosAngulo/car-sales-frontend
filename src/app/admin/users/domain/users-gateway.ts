@@ -5,6 +5,8 @@ import { IUserDTO } from "src/app/models/user.model";
 
 export abstract class UsersGateway {
     abstract getAll(queryParams?:string): Observable<IPaginationDTO<IUserDTO>>;
+    abstract getById(userId: string): Observable<IUserDTO>;
+    abstract updateUser(body: IUserDTO): Observable<IUserDTO>;
     abstract createUser(name:string, email:string, role: string): Observable<IUserDTO>;
     abstract deleteUser(id: string): Observable<void | IErrorDTO>;
 }

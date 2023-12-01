@@ -57,27 +57,6 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.nbMenuService.onItemClick()
-    // .pipe(
-    //   takeUntil(this.unsubscribe$),
-    //   filter(({ tag }) => tag === 'userContextMenu'),
-    //   map(({ item: { title } }) => title),
-    //   switchMap((title) => {
-    //     if (title === UserMenu.LOGOUT) {
-    //       return this.authService.logout(this.authService.refreshTokenString)
-    //       .pipe(
-    //         switchMap(() => of({logout: true}))
-    //       )
-    //     } else {
-    //       return of('profile')
-    //     }
-    //   })
-    // )
-    // .subscribe((resp: any) => {
-    //   if(resp.logout) {
-    //     // this.router.navigate(['/auth/login'])
-    //   }
-    // });
   }
 
   navigateTo(route: string) {

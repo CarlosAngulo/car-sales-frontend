@@ -28,6 +28,7 @@
                 <div class="flex flex-grow items-center gap-4 justify-center">
                     <nb-toggle
                         (checkedChange)="onRoleChange($event)"
+                        [checked]="isAdmin"
                         status="primary"
                         labelPosition="start">
                         Is Admin?

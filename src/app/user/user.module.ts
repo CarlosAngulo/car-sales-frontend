@@ -7,7 +7,6 @@ import { PaymentComponent } from './payment/payment.component';
 import { ReportsGateway } from '../admin/reports/domain/reports-gateway';
 import { ReportsService } from '../admin/reports/infraestructure/report.service';
 import {
-  NB_TIME_PICKER_CONFIG,
   NbAccordionModule,
   NbActionsModule,
   NbCardModule,
@@ -17,7 +16,6 @@ import {
   NbIconModule,
   NbInputModule,
   NbLayoutModule,
-  NbRangepickerComponent,
   NbSpinnerModule,
   NbUserModule
 } from '@nebular/theme';
@@ -37,7 +35,6 @@ import { SharedModule } from '../shared/shared.module';
     NbAccordionModule,
     NbActionsModule,
     NbCardModule,
-    NbContextMenuModule,
     NbInputModule,
     NbLayoutModule,
     NbSpinnerModule,
@@ -45,6 +42,7 @@ import { SharedModule } from '../shared/shared.module';
     RouterModule,
     SharedModule,
     UserRoutingModule,
+    NbContextMenuModule,
     NbDatepickerModule.forRoot(),
   ],
   providers: [

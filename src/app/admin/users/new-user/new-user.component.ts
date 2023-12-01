@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, AfterViewInit, SimpleChanges, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, catchError, of, takeUntil } from 'rxjs';
-import { IUserDTO } from 'src/app/models/user.model';
+import { IUserDTO, Roles } from 'src/app/models/user.model';
 import { UsersGateway } from '../domain/users-gateway';
 
 @Component({
@@ -9,9 +9,12 @@ import { UsersGateway } from '../domain/users-gateway';
   templateUrl: './new-user.component.html',
   styleUrls: ['./new-user.component.scss']
 })
-export class NewUserComponent {
+export class NewUserComponent implements AfterViewInit, OnChanges {
   @Output() onUserCreated: EventEmitter<IUserDTO> = new EventEmitter<IUserDTO>();
   @Output() onCancelCreation: EventEmitter<void> = new EventEmitter();
+  @Input() user!: IUserDTO | undefined;
+  
+  isAdmin = false;
   createUserForm!: FormGroup;
   unsubscribe$: Subject<void> = new Subject<void>();
   roles: any[] = [
@@ -32,8 +35,22 @@ export class NewUserComponent {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.user && this.preFillOut(this.user);
+  }
+
+  preFillOut(user:IUserDTO) {
+    if (!user) return;
+    this.createUserForm.patchValue({
+      email: user.email,
+      name: user.name,
+      role: user.role
+    })
+    this.isAdmin = user.role === Roles.ADMIN;
+  }
+
   onRoleChange(event: boolean) {
-    this.createUserForm.get('role')?.patchValue(event ? 'admin' : 'user');
+    this.createUserForm.get('role')?.patchValue(event ? Roles.ADMIN : Roles.USER);
   }
 
   onCancel(): void {
@@ -47,7 +64,16 @@ export class NewUserComponent {
       const email = this.createUserForm.get('email')?.value;
       const role = this.createUserForm.get('role')?.value;
 
-      this.usersService.createUser(name, email, role)
+      const action = this.user 
+      ? this.usersService.updateUser({
+        id: this.user.id,
+        name,
+        email,
+        role
+      } as IUserDTO)
+      : this.usersService.createUser(name, email, role)
+
+      action
       .pipe(
         takeUntil(this.unsubscribe$),
         catchError((x) => of(x.error))
@@ -68,5 +94,12 @@ export class NewUserComponent {
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const user: IUserDTO = changes['user']?.currentValue;
+    if(user && this.createUserForm) {
+      this.preFillOut(user);
+    }
   }
 }

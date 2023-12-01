@@ -12,6 +12,7 @@
 
 <app-new-user
     *ngIf="showCreateUserComponent"
+    [user]="userToEdit"
     (onCancelCreation)="hideAddUser()"
     (onUserCreated)="userCreated($event)">
 </app-new-user>

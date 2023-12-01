@@ -25,7 +25,7 @@
                         <span class="uppercase font-bold text-center text-slate-400">Reviews</span>
                     </div>
                     <div class="flex flex-col gap-3 justify-center">
-                        <span class="text-3xl text-center font-bold">${{ paid }}</span>
+                        <span class="text-3xl text-center font-bold">{{ paid | currency }}</span>
                         <span class="uppercase font-bold text-center text-slate-400">Paid</span>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
         [nbSpinner]="loading"
         nbSpinnerStatus="primary">
         <nb-accordion-item>
-            <nb-accordion-item-header>Show Reviews</nb-accordion-item-header>
+            <nb-accordion-item-header>Reviews</nb-accordion-item-header>
             <nb-accordion-item-body>
                 <table class="divide-muted-200 min-w-full table-fixed divide-y mb-5">
                     <thead>
@@ -55,7 +55,7 @@
                                 {{ report.client }}
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-500 p-2 text-right bg-gray-100">
-                                ${{ report.paid }}
+                                {{ report.paid | currency }}
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-500 p-2 uppercase text-center">
                                 {{ report.positive | booleanToString }}
@@ -67,7 +67,7 @@
                                 {{ report.submitted | date:"mediumDate" }}
                             </td>
                             <td class="whitespace-nowrap text-sm text-muted-500 p-2 uppercase text-center bg-gray-100">
-                                {{ report.store }}
+                                {{ report.platform }}
                             </td>
                         </tr>
                     </tbody>

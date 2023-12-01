@@ -13,7 +13,7 @@ import { IReportDTO } from 'src/app/models/report.model';
 export class PaymentComponent implements OnInit {
   showReports = false;
   reports!: IReportDTO[];
-  tableHeaders = ["Client", "Paid ", "Positive", "Rating", "Submited", "Store"];
+  tableHeaders = ["Client", "Paid ", "Positive", "Rating", "Submited", "Platform"];
   loading = false;
   paid = 0;
   totalReviews = 0;
@@ -44,7 +44,7 @@ export class PaymentComponent implements OnInit {
 
   onDateRangeSelected(event: any) {
     if (event.start && event.end) {
-      this.getReports$({startDate: new Date(event.start), endDate: new Date( event.end)})
+      this.getReports$({startDate: new Date(event.start).getTime(), endDate: new Date( event.end).getTime()})
       .subscribe((res) => {
         this.reports = res.results;
         this.totalReviews = res.totalResults || 0;

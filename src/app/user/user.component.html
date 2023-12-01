@@ -1,15 +1,6 @@
 <nb-layout>
     <nb-layout-header>
-        <div class="nav-header flex justify-between items-center gap-4 w-full">
-            <!-- <nb-card class="grow m-0">
-                <nb-card-body>
-                    <nb-actions size="small" fullWidth>
-                        <nb-action icon="person-outline" [routerLink]="'profile'"></nb-action>
-                        <nb-action icon="percent-outline" [routerLink]="'score'"></nb-action>
-                    </nb-actions>
-                </nb-card-body>
-            </nb-card> -->
-
+        <div class="nav-header flex justify-end items-center gap-4 w-full">
             <nb-user size="large"
                 *ngIf="user"
                 [name]="user.name"

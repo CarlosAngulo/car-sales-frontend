@@ -14,6 +14,7 @@ export class UsersComponent {
   users!: IUserDTO[];
   currentUserId!: string;
   showCreateUserComponent = false;
+  userToEdit!: IUserDTO | undefined;
 
   constructor(
     private readonly usersService: UsersGateway,
@@ -33,6 +34,7 @@ export class UsersComponent {
   }
 
   onAddUserClick() {
+    this.userToEdit = undefined;
     this.showCreateUserComponent = true;
   }
 
@@ -68,7 +70,11 @@ export class UsersComponent {
   }
   
   editUser(userId: string) {
-    console.log('edit User')
+    this.usersService.getById(userId)
+    .subscribe((user) => {
+      this.showCreateUserComponent = true;
+      this.userToEdit = user;
+    });
   }
   
 }

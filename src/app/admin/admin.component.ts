@@ -21,7 +21,6 @@ export class AdminComponent implements OnInit, OnDestroy {
   unsubscribe$: Subject<void> = new Subject<void>();
 
   userMenu = [
-    { title: UserMenu.PROFILE },
     { title: UserMenu.LOGOUT },
   ];
 
@@ -35,12 +34,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       title: 'Users',
       icon: 'people-outline',
       link: 'users'
-    },
-    {
-      title: 'User',
-      link: '/user',
-      icon: 'person-outline',
-    },
+    }
   ];
 
   constructor(

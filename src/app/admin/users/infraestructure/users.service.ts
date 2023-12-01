@@ -34,4 +34,16 @@ export class UsersService extends UsersGateway {
     deleteUser(id:string): Observable<void | IErrorDTO> {
         return this.http.delete<void | IErrorDTO>(`${this.url}/users/${id}`);
     }
+
+    getById(id: string): Observable<IUserDTO> {
+        return this.http.get<IUserDTO>(`${this.url}/users/${id}`);
+    }
+
+    updateUser(body: IUserDTO): Observable<IUserDTO> {
+        return this.http.patch<IUserDTO>(`${this.url}/users/${body.id}`, {
+            email: body.email,
+            name: body.name,
+            role: body.role
+        });
+    }
 }

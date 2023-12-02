@@ -19,7 +19,8 @@ import {
   NbSelectModule,
   NbSpinnerModule,
   NbContextMenuModule,
-  NbPopoverModule
+  NbPopoverModule,
+  NbToastrModule
 } from '@nebular/theme';
 import { NbAuthModule } from '@nebular/auth';
 import { AdminComponent } from './admin.component';
@@ -67,6 +68,7 @@ import { StoresService } from './stores/infraestructure/stores.service';
     NbTreeGridModule,
     NbContextMenuModule,
     SharedModule,
+    NbToastrModule.forRoot(),
     NbDialogModule.forRoot(),
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),

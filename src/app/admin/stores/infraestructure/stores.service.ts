@@ -5,7 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { StoresGateway } from "../domain/stores-gateway";
 import { IPaginationDTO } from "src/app/models/pagination.model";
 import { IUserDTO } from "src/app/models/user.model";
-import { IErrorDTO } from "src/app/models/error.model";
+import { IErrorDTO } from "src/app/models/responses.model";
 import { IStoreDTO } from "src/app/models/store.model";
 
 @Injectable({

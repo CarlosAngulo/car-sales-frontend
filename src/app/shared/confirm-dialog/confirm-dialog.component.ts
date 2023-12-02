@@ -10,6 +10,7 @@ export class ConfirmDialogComponent {
   icon!: string;
   title = '';
   message = '';
+  cancelBtn = true;
   constructor( protected ref: NbDialogRef<ConfirmDialogComponent> ) {}
 
 }

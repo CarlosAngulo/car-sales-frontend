@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { IErrorDTO } from "src/app/models/error.model";
+import { IErrorDTO } from "src/app/models/responses.model";
 import { IPaginationDTO } from "src/app/models/pagination.model";
 import { IReportDTO } from "src/app/models/report.model";
 

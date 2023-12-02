@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, TemplateRef } from '@angular/core';
 import { UsersGateway } from '../users/domain/users-gateway';
 import { IUserDTO } from 'src/app/models/user.model';
 import { IDropdownOption } from 'src/app/shared/dropdown/dropdown.component';
-import { NbComponentSize, NbDialogService } from '@nebular/theme';
+import { NbComponentSize, NbDialogService, NbGlobalPhysicalPosition, NbToastrService } from '@nebular/theme';
 import { ReportsGateway } from './domain/reports-gateway';
 import { IReportDTO } from 'src/app/models/report.model';
 import { Observable, catchError, delay, forkJoin, of, switchMap, tap } from 'rxjs';
@@ -40,6 +40,7 @@ export class ReportsComponent implements OnInit {
   ];
   pagination!: IPaginationMeta;
   currentEditedReport!: IReportDTO | undefined;
+  toastrPositions = NbGlobalPhysicalPosition;
 
   tableHeaders = ["Client", "Sales Person", "Picture", "Paid ", "Positive", "Rating", "Submited", "Plaform", "Actions"];
 
@@ -55,7 +56,8 @@ export class ReportsComponent implements OnInit {
     private readonly dialogService: NbDialogService,
     private readonly fb: FormBuilder,
     private readonly formValidators: FormValidatorsService,
-    private readonly papa: Papa
+    private readonly papa: Papa,
+    private toastrService: NbToastrService
   ) { }
 
   ngOnInit(): void {
@@ -189,10 +191,11 @@ export class ReportsComponent implements OnInit {
         switchMap((res) => {
           this.currentReportEdit = '';
           this.currentEditedReport = undefined;
+          this.showToastr('The review has been updated.')
           return this.getReports$();
         })
       )
-      .subscribe((res) =>{
+      .subscribe((res) => {
         this.loadReportList(res);
       })
     }
@@ -333,5 +336,17 @@ export class ReportsComponent implements OnInit {
   onPageChange(event: number) {
     this.getReports$({'page': event})
     .subscribe((res) =>this.loadReportList(res))
+  }
+
+  showToastr(message: string, status: string = 'Success', position = this.toastrPositions.BOTTOM_LEFT ) {
+    this.toastrService.show(
+      status,
+      message,
+      {
+        position,
+        status: status.toLowerCase()
+      }
+    );
+    return;
   }
 }

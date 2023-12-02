@@ -1,15 +1,21 @@
 <nb-layout>
     <nb-layout-header>
-        <div class="nav-header">
-            <nb-user size="large"
-                *ngIf="user"
-                [name]="user.name"
-                [title]="user.role"
-                [nbContextMenu]="userMenu"
-                nbContextMenuTag="userContextMenu"
-                badgeStatus="success"
-                badgePosition="bottom right">
-            </nb-user>
+        <div class="flex justify-between items-center w-full">
+            <div class="text-3xl font-black brand flex items-center gap-1">
+                <nb-icon icon="cube-outline"></nb-icon>
+                carvision
+            </div>
+            <div class="nav-header">
+                <nb-user size="large"
+                    *ngIf="user"
+                    [name]="user.name"
+                    [title]="user.role"
+                    [nbContextMenu]="userMenu"
+                    nbContextMenuTag="userContextMenu"
+                    badgeStatus="success"
+                    badgePosition="bottom right">
+                </nb-user>
+            </div>
         </div>
     </nb-layout-header>
 

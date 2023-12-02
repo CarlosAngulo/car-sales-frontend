@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { IErrorDTO } from "src/app/models/error.model";
+import { IErrorDTO } from "src/app/models/responses.model";
 import { IStoreDTO } from "src/app/models/store.model";
 
 export abstract class StoresGateway {

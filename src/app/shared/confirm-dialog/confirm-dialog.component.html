@@ -21,6 +21,7 @@
                 (click)="ref.close(true)">Aceptar
             </button>
             <button
+                *ngIf="cancelBtn"
                 nbButton
                 class="grow"
                 status="danger"

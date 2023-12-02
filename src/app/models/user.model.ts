@@ -14,3 +14,7 @@ export interface IUserDTO extends ITokensDTO {
     role: TRole;
     isEmailVerified?: false
 };
+
+export interface IUsedInDTO {
+    usedIn: number;
+}

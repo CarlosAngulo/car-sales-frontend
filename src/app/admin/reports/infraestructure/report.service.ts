@@ -4,7 +4,7 @@ import { environment } from '../../../environment/environment';
 import { HttpClient } from "@angular/common/http";
 import { ReportsGateway } from "../domain/reports-gateway";
 import { IPaginationDTO } from "src/app/models/pagination.model";
-import { IErrorDTO } from "src/app/models/error.model";
+import { IErrorDTO } from "src/app/models/responses.model";
 import { IReportDTO } from "src/app/models/report.model";
 
 @Injectable({

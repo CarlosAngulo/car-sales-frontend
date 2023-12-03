@@ -44,7 +44,7 @@ export class CSVMapper {
             type: 'string'
         },
         'Source': {
-            label: 'plaform',
+            label: 'platform',
             type: 'string'
         },
         'Submitted': {

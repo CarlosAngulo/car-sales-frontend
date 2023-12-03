@@ -4,7 +4,7 @@ import { Subject, filter, map, of, switchMap, takeUntil } from 'rxjs';
 import { ITokenTypes } from '../models/auth.model';
 import { AuthService } from '../auth/infraestrcuture/auth.service';
 import { UserMenu } from '../admin/admin.component';
-import { NbMenuService } from '@nebular/theme';
+import { NbMenuService, NbThemeService } from '@nebular/theme';
 import { Router } from '@angular/router';
 
 @Component({
@@ -24,9 +24,10 @@ export class UserComponent implements OnInit, OnDestroy {
   constructor(
     private nbAuthService: NbAuthService,
     private authService: AuthService,
-    private router: Router
-    // private nbMenuService: NbMenuService,
-  ){
+    private router: Router,
+    private themeService: NbThemeService) {
+    this.themeService.changeTheme('user-theme');
+    
     this.nbAuthService.onTokenChange()
       .pipe(
         takeUntil(this.unsubscribe$),

@@ -1,5 +1,6 @@
 @forward '@nebular/theme/styles/theming';
 @use '@nebular/theme/styles/theming' as *;
+@use '@nebular/theme/styles/themes/default';
 @use '@nebular/theme/styles/themes/dark';
 @use 'sass:color';
 
@@ -47,3 +48,39 @@ $nb-themes: nb-register-theme((
     tree-grid-cell-padding: 0.35rem 0.75rem,
     tree-grid-cell-border-color: #DDD,
 ), 'custom-theme', 'default');
+
+$mobile-card-radius: 24px;
+
+$nb-themes: nb-register-theme(
+  (
+    font-family-primary: 'Montserrat',
+
+    layout-background-color: transparent,
+    input-rectangle-border-radius: 900px,
+    user-name-text-color: rgb(221 214 254),
+    user-name-text-font-weight: 800,
+    user-initials-text-color: #9655d3,
+    user-initials-text-font-weight: 800,
+    user-title-text-color: #9655d3,
+    user-picture-box-border-color: #cf9efe,
+    user-picture-box-border-width: 2px,
+
+    datepicker-background-color: #f1eef7,
+    datepicker-border-radius: $mobile-card-radius,
+    datepicker-border-width: 2px,
+    datepicker-border-color: #e3daff,
+    calendar-weekday-text-color: #7961c1,
+    calendar-weekday-holiday-text-color: #7961c1,
+    calendar-cell-inactive-text-color: #a99ad7,
+    calendar-cell-selected-background-color: #8869d1,
+    calendar-cell-selected-border-color: #8869d1,
+
+    card-border-radius: $mobile-card-radius,
+    card-padding: 2rem 1.25rem,
+    card-background-color: #ede9fe,
+
+    accordion-border-radius: $mobile-card-radius,
+  ),
+  'user-theme',
+  'default'
+);

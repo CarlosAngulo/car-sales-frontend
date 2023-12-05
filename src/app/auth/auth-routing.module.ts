@@ -3,10 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import {
     NbAuthComponent,
     NbLoginComponent,
-    NbRegisterComponent,
-    NbLogoutComponent,
     NbRequestPasswordComponent,
-    NbResetPasswordComponent
   } from '@nebular/auth';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { LoginRedirectComponent } from './components/login-redirect/login-redirect.component';

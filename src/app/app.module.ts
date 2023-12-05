@@ -30,7 +30,7 @@ import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.compone
     AppRoutingModule,
     HttpClientModule,
     NbEvaIconsModule,
-    NbThemeModule.forRoot({ name: 'custom-theme' }),
+    NbThemeModule.forRoot({ name: 'user-theme' }),
     NbAuthModule.forRoot({
       strategies: [
         NbPasswordAuthStrategy.setup({

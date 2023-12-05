@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NbPasswordAuthStrategy } from '@nebular/auth';
-import { catchError } from 'rxjs';
+import { catchError, delay, map, tap } from 'rxjs';
 import { FormValidatorsService } from 'src/app/shared/services/form-validators.service';
 @Component({
   selector: 'app-reset-password',
@@ -19,7 +19,8 @@ export class ResetPasswordComponent implements OnInit {
     private route: ActivatedRoute,
     private passwordStrategy: NbPasswordAuthStrategy,
     private fb: FormBuilder,
-    private validators: FormValidatorsService
+    private validators: FormValidatorsService,
+    private router: Router
   ) {
     this.route.queryParams.subscribe((params) => {
       this.token = params['token'];
@@ -47,14 +48,20 @@ export class ResetPasswordComponent implements OnInit {
   onResetPassword() {
     this.passwordStrategy.resetPassword(this.resetPasswForm.value)
     .pipe(
-      catchError((error) => error)
-    )
-    .subscribe((res:any) => {
-      if (res.message) {
+      catchError((error) => {
         this.error = true;
-        return;
+        return error
+      }),
+      tap(() => this.success = true),
+      delay(500),
+      map(() => {
+        return true
+      })
+    )
+    .subscribe((res) => {
+      if(res) {
+        this.router.navigate(['/auth/login'])
       }
-      this.success = true;
     })
   }
 }

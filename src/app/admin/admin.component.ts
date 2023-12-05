@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NbMenuItem, NbMenuService } from '@nebular/theme';
+import { NbMenuItem, NbMenuService, NbThemeService } from '@nebular/theme';
 import { NbAuthService } from '@nebular/auth';
 import { AuthService } from '../auth/infraestrcuture/auth.service';
 import { Subject, filter, map, of, switchMap, takeUntil, tap } from 'rxjs';
@@ -41,8 +41,10 @@ export class AdminComponent implements OnInit, OnDestroy {
     private nbAuthService: NbAuthService,
     private authService: AuthService,
     private nbMenuService: NbMenuService,
-    private router: Router
+    private router: Router,
+    private themeService: NbThemeService
   ) {
+    this.themeService.changeTheme('custom-theme');
     this.nbAuthService.onTokenChange()
       .pipe(
         takeUntil(this.unsubscribe$),

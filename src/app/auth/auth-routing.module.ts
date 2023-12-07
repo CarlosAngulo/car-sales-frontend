@@ -22,11 +22,11 @@ export const authRoutes: Routes = [
                 component: NbLoginComponent,
             },
             {
-                path: 'request-password',
+                path: 'requestpassword',
                 component: NbRequestPasswordComponent,
             },
             {
-                path: 'reset-password',
+                path: 'resetpassword',
                 component: ResetPasswordComponent,
             },
             {
